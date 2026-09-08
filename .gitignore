@@ -1,0 +1,17 @@
+data/raw/*
+!data/raw/.gitkeep
+data/processed/ck/*
+!data/processed/ck/.gitkeep
+data/processed/snippets/*
+!data/processed/snippets/.gitkeep
+data/processed/embeddings/*
+!data/processed/embeddings/.gitkeep
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+CLAUDE.MD
+PRD.MD
+PROMPTS.MD

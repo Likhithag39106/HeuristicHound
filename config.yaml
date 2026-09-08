@@ -1,0 +1,116 @@
+# Heuristic Hound — Paper 1 configuration
+# All paths, thresholds, hyperparameters, and the minor-severity rule live here.
+# Nothing in phase_a_data/, phase_b_metrics/, phase_c_embeddings/, phase_d_results/
+# should hardcode a value that belongs in this file.
+
+seed: 42
+
+paths:
+  datasets_dir: datasets
+  samples_csv: datasets/MLCQCodeSmellSamples.csv
+  survey_csv: datasets/MLCQCodeSmellDevelopersSurvey.csv
+  raw_clones: data/raw
+  ck_output: data/processed/ck
+  snippets: data/processed/snippets
+  embeddings: data/processed/embeddings
+  splits_dir: eval/splits
+  results_dir: eval/results
+
+# ---------------------------------------------------------------------------
+# Step 1-2 — fetch and extraction
+# ---------------------------------------------------------------------------
+fetch:
+  pilot_repo_count: 20            # per prd.md §5 — pilot before authorizing the full 522-repo run
+  clone_depth: 1
+  manifest_file: data/raw/_progress_manifest.json   # resumability checkpoint, Steps 1-2
+
+extraction:
+  ck_jar_path: null               # TODO: set once the CK jar is downloaded (mauricioaniche/ck)
+  large_repo_size_mb_threshold: null  # TODO: set threshold above which CK is scoped to the enclosing Maven/Gradle module
+  scoped_repos_log: data/processed/ck/_scoped_repos.json
+
+# ---------------------------------------------------------------------------
+# Step 5 — label aggregation and binarization
+# ---------------------------------------------------------------------------
+labels:
+  reviewer_aggregation: max_severity     # per-sample: take the max severity across reviewers
+  # TODO — DECISION PENDING: whether "minor" counts as positive.
+  #   major_critical_only : none -> negative, minor -> negative, major/critical -> positive
+  #                          (matches the kappa figures and "Positives" column already in prd.md)
+  #   minor_plus          : none -> negative, minor+ -> positive
+  #                          (roughly doubles positive count for Blob/Data Class; see EDA in prompt.md history)
+  # Placeholder below is major_critical_only, matching prd.md's reported baseline numbers.
+  # Do not treat this as decided — flip explicitly once settled, and note the reason in the commit message.
+  minor_severity_rule: major_critical_only
+  agreement_metric: krippendorff_alpha   # Step 5: recompute kappa figures properly for variable rater counts
+
+# ---------------------------------------------------------------------------
+# Step 6 — splits
+# ---------------------------------------------------------------------------
+splits:
+  group_column: repository
+  test_size: 0.2
+  strategy: GroupShuffleSplit
+  cv_folds: 5
+  cv_strategy: StratifiedGroupKFold
+  row_level_contrast_experiment: true   # Step 12 only — never the primary protocol
+
+# ---------------------------------------------------------------------------
+# Step 7 — rule baseline (Lanza & Marinescu)
+# ---------------------------------------------------------------------------
+rule_baseline:
+  god_class:
+    atfd_gt: 5
+    wmc_gte: 47
+    tcc_lt: 0.3333
+  data_class:
+    # TODO: verify exact public-field/accessor-ratio and WMC constants against
+    # "Object-Oriented Metrics in Practice" before Step 7 — do not restate from memory.
+    wmc_lte: null
+    public_field_accessor_ratio_gte: null
+
+# ---------------------------------------------------------------------------
+# Step 8 — metrics models
+# ---------------------------------------------------------------------------
+metrics_models:
+  order: [logistic_regression, random_forest, xgboost, lightgbm]
+  logistic_regression:
+    penalty: l2
+    class_weight: balanced
+  random_forest:
+    class_weight: balanced_subsample
+  xgboost:
+    scale_pos_weight: auto   # computed from actual class ratio per smell, not hardcoded
+  min_seeds_below_n_positives: 200   # Feature Envy, Long Method: 5+ seeds, report mean +/- std
+  n_seeds_when_below_threshold: 5
+
+# ---------------------------------------------------------------------------
+# Step 9-10 — embeddings
+# ---------------------------------------------------------------------------
+embeddings:
+  candidate_encoders: [codebert, unixcoder, cubert, codet5]
+  default_encoder: cubert   # strongest published starting point per prd.md (God Class F=0.53, Long Method F=0.75)
+  max_tokens: 512
+  strategies: [truncation, hierarchical_pooling]
+  hierarchical_pool: mean   # mean or attention
+  batch_size: null          # TODO: set based on measured 16GB RAM headroom during pilot
+  reference_embeddings_repo: milica-skipina/ML-code-smell-detection   # validation only, not their splits
+
+# ---------------------------------------------------------------------------
+# Step 11 — fusion
+# ---------------------------------------------------------------------------
+fusion:
+  early:
+    embedding_pca_dims: 50   # mitigates the 14-metric vs 768-dim imbalance
+    scale_metrics: true
+  late:
+    stacker: logistic_regression   # weights learned on validation folds, never max-of-two
+
+# ---------------------------------------------------------------------------
+# Step 12 — threshold, calibration, evaluation
+# ---------------------------------------------------------------------------
+evaluation:
+  threshold_policy: global_per_smell   # selected on validation folds by maximizing F1, frozen, applied uniformly
+  calibration_method: isotonic          # CalibratedClassifierCV(method="isotonic")
+  headline_metrics: [f1, mcc, pr_auc]   # never accuracy
+  ood_dataset: null   # TODO: set path once D3 (CrowdSmelling / Zenodo 6555241) is downloaded at Step 12
