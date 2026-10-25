@@ -6,6 +6,12 @@ data/processed/snippets/*
 !data/processed/snippets/.gitkeep
 data/processed/embeddings/*
 !data/processed/embeddings/.gitkeep
+data/processed/relational/*
+!data/processed/relational/.gitkeep
+
+# CK jar (download: Maven Central com.github.mauricioaniche:ck:0.7.0, jar-with-dependencies)
+tools/
+.pytest_cache/
 
 __pycache__/
 *.pyc
