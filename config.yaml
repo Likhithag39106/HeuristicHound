@@ -8,7 +8,8 @@ seed: 42
 # Human gates (PRD §0.5). Only the user flips these, after checking the gate's output.
 gates:
   join_class_verified: true      # Step 3: 30 rows in join_manual_check.csv checked by hand (user sign-off 2026-10-25)
-  metrics_beat_rules: false      # Step 8: best metrics model beats the rule baseline
+  metrics_beat_rules: true       # Step 8: best metrics model beats the rule baseline (user sign-off 2026-10-28;
+                                 # gate re-verified against eval/results/step8_summary_20261028_154932.json)
 
 paths:
   datasets_dir: datasets
@@ -25,6 +26,7 @@ paths:
   join_report: ~/HeuristicHound_local/data/processed/join_report.json
   join_manual_check: ~/HeuristicHound_local/data/processed/join_manual_check.csv
   labels_class: ~/HeuristicHound_local/data/processed/labels_class.parquet
+  predictions: ~/HeuristicHound_local/data/processed/predictions   # OOF + test scores per arm (Steps 8-12)
   splits_dir: eval/splits
   results_dir: eval/results
 
@@ -244,15 +246,59 @@ rule_baseline:
 # ---------------------------------------------------------------------------
 # Step 8 — metrics models
 # ---------------------------------------------------------------------------
+# Step 8 decisions (user, 2026-10-28): threshold = frozen out-of-fold max-F1; best model = highest
+# CV PR-AUC; TCC/LCC -1 and blanks -> missing + flags; major_critical_only scored report-only;
+# LightGBM skipped (optional, not installed).
 metrics_models:
-  order: [logistic_regression, random_forest, xgboost, lightgbm]
+  order: [logistic_regression, random_forest, xgboost]   # lightgbm skipped (see above)
+  seeds: [42, 43, 44, 45, 46]          # tuning uses the first; every seed refits and scores test once
+  # PRD Step 8 features: WMC LOC NOM NOF CBO RFC LCOM LCOM* TCC LCC DIT NOC fan-in fan-out + ATFD.
+  # Both CK LCOM variants are used: ck_lcom (CK's LCOM, a count) and ck_lcom* (Henderson-Sellers, normalized).
+  features: [ck_wmc, ck_loc, ck_totalMethodsQty, ck_totalFieldsQty, ck_cbo, ck_rfc, ck_lcom, "ck_lcom*",
+             ck_tcc, ck_lcc, ck_dit, ck_noc, ck_fanin, ck_fanout, atfd]
+  negative_is_missing: [ck_tcc, ck_lcc]               # CK writes -1 when TCC/LCC cannot be computed
+  missing_indicators: [ck_tcc, ck_lcc, "ck_lcom*"]    # adds <feature>_missing (0/1) columns
+  log1p_features: [ck_wmc, ck_loc, ck_totalMethodsQty, ck_totalFieldsQty, ck_cbo, ck_rfc, ck_lcom,
+                   ck_dit, ck_noc, ck_fanin, ck_fanout, atfd]   # LogReg pipeline only (skewed counts)
+  tuning_metric: pr_auc                # mean over the 5 CV validation folds; also selects the best model
+  threshold_policy: oof_max_f1         # frozen per model/smell/seed from pooled out-of-fold scores
+  permutation_importance_repeats: 10   # RF/XGBoost, on CV validation folds (never test)
+  n_jobs: -1
   logistic_regression:
     penalty: l2
     class_weight: balanced
+    max_iter: 5000
+    grid:
+      C: [0.01, 0.1, 1, 10, 100]
   random_forest:
     class_weight: balanced_subsample
+    n_estimators: 500
+    grid:
+      max_depth: [null, 5, 10]
+      min_samples_leaf: [1, 5, 10]
+      max_features: [sqrt, 0.5]
   xgboost:
-    scale_pos_weight: auto   # computed from actual class ratio per smell, not hardcoded
+    scale_pos_weight: auto   # negatives/positives of each fit's own training rows, not hardcoded
+    subsample: 0.8
+    colsample_bytree: 0.8
+    tree_method: hist
+    grid:
+      max_depth: [2, 3, 4, 6]
+      learning_rate: [0.03, 0.1]
+      n_estimators: [200, 500]
+      min_child_weight: [1, 5]
+  # Locked by CV PR-AUC on 2026-10-28 (run step8_summary_20261028_154932.json), before test was read.
+  # Never re-selected on test performance. Steps 11-12 use these; read-only record, not read by Step 8.
+  locked_selection:
+    blob:
+      model: logistic_regression
+      params: {C: 0.01}                  # at the lower grid boundary (limitation, not re-tuned)
+      cv_pr_auc: 0.6511
+    data_class:
+      model: xgboost
+      params: {learning_rate: 0.03, max_depth: 2, min_child_weight: 5, n_estimators: 200}
+      cv_pr_auc: 0.5745
+    predictions_dir: ~/HeuristicHound_local/data/processed/predictions/metrics   # *_20261028_154326.parquet
   min_seeds_below_n_positives: 200   # Feature Envy, Long Method: 5+ seeds, report mean +/- std
   n_seeds_when_below_threshold: 5
 
@@ -261,7 +307,13 @@ metrics_models:
 # ---------------------------------------------------------------------------
 embeddings:
   candidate_encoders: [codebert, unixcoder, cubert, codet5]
-  default_encoder: cubert   # strongest published starting point per prd.md (God Class F=0.53, Long Method F=0.75)
+  # D-3 (decided by the user, 2026-10-28): CodeBERT. The PRD does not mandate CuBERT (D-3 recommended
+  # CodeBERT or UniXcoder); the KB's architecture names CodeBERT; CuBERT has no standard HuggingFace
+  # PyTorch checkpoint, which CPU-only frozen encoding needs. CuBERT's published MLCQ numbers
+  # (God Class F=0.53) stay a literature reference only.
+  default_encoder: codebert
+  encoder_hf_id: microsoft/codebert-base
+  encoder_revision: 3b0952feddeffad0063f274080e3c23d75e7eb39   # pinned HF commit (public, not gated; checked 2026-10-28)
   max_tokens: 512
   strategies: [truncation, hierarchical_pooling]
   hierarchical_pool: mean   # mean or attention

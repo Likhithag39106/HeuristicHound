@@ -135,6 +135,18 @@ def file_sha256(path: Path) -> str | None:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def portable_path(path: Path | str) -> str:
+    """Machine-independent form for paths recorded in results: project-relative (POSIX) inside the repo,
+    `~/...` under the home directory, absolute otherwise. `p()` resolves it back."""
+    path = Path(path).absolute()
+    for base, prefix in ((ROOT, ""), (Path.home(), "~/")):
+        try:
+            return prefix + path.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return str(path)
+
+
 def write_results(cfg: dict, name: str, payload: dict, split_file: Path | None = None) -> Path:
     """Write eval/results/<name>_<timestamp>.json with run metadata. Never overwrites."""
     results_dir = p(cfg["paths"]["results_dir"])
@@ -149,7 +161,7 @@ def write_results(cfg: dict, name: str, payload: dict, split_file: Path | None =
         "created": datetime.now().isoformat(timespec="seconds"),
         "git_commit": git_commit_hash(),
         "seed": cfg.get("seed"),
-        "split_file": str(split_file) if split_file else None,
+        "split_file": portable_path(split_file) if split_file else None,
         "split_file_sha256": file_sha256(split_file) if split_file else None,
         "config": copy.deepcopy(cfg),
     }
