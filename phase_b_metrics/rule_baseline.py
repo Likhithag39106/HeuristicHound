@@ -74,7 +74,7 @@ def evaluate_rule(name: str, df: pd.DataFrame, cfg: dict) -> dict:
         "skipped": False, "constants": consts,
         "metrics": binary_metrics(y, y_pred=pred),
         "ci": {m: bootstrap_ci(y, pred, None, groups, m, ev["bootstrap_n"], ev["bootstrap_alpha"], cfg["seed"])
-               for m in ("f1", "mcc")},
+               for m in ("f1", "mcc", "pr_auc")},
         "pr_auc_note": "hard 0/1 rule: PR-AUC is a single operating point, not a curve",
         "n_scored": int(len(rated)), "n_missing_rule_inputs_predicted_negative": int(missing.sum()),
     }
@@ -98,7 +98,8 @@ def main(argv: list[str] | None = None) -> None:
         m = res["metrics"]
         print(f"{name}: F1={m['f1']:.3f} [{res['ci']['f1']['ci_low']:.3f}, {res['ci']['f1']['ci_high']:.3f}]  "
               f"MCC={m['mcc']:.3f} [{res['ci']['mcc']['ci_low']:.3f}, {res['ci']['mcc']['ci_high']:.3f}]  "
-              f"PR-AUC(point)={m['pr_auc']:.3f}  -> {out}")
+              f"PR-AUC(single point)={m['pr_auc']:.3f} [{res['ci']['pr_auc']['ci_low']:.3f}, "
+              f"{res['ci']['pr_auc']['ci_high']:.3f}]  -> {out}")
 
 
 if __name__ == "__main__":
