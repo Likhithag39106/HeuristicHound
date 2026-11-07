@@ -333,18 +333,22 @@ Then delete the clone. For repos over a size threshold, scope CK to the enclosin
 
 **Step 6 — Splits.** `GroupShuffleSplit(groups=repository)`, 80/20. Repo lists committed. `StratifiedGroupKFold` (5-fold) for training-time use. Also generate a **row-level split labelled as contrast experiment only** — used exactly once, in Step 12.
 
+*Done 2026-10-25:* Step 5 counts and α reproduce §3 under both rules; Step 6 used seed 42 (349 train / 88 test repos, 1,753 / 587 samples; test positive rate within ±2 pp).
+
 ### Phase B — Metrics arm
 
 **Step 7 — Rule baseline.** Lanza & Marinescu detection strategies. **Decision (D-4, 2026-10-13): thresholds as implemented in PMD 7**, whose `GodClassRule` cites the book (p. 80). The book gives FEW / MANY as ranges (FEW = 2–5), so tools pick different values (PMD 3/5, an NDepend reimplementation 5/8); PMD's are reproducible and widely used.
 - God Class: `ATFD > 5 AND WMC ≥ 47 AND TCC < 1/3` (all sources agree).
 - Data Class: `WOC < 1/3 AND ((NOPA+NOAM > 3 AND WMC < 31) OR (NOPA+NOAM > 5 AND WMC < 47))`.
 - WMC = summed cyclomatic complexity in both the book/PMD and CK. Definition differences to report: our NOPA excludes static fields (PMD counts them); our WOC divides by public methods + NOPA (Marinescu's definition; PMD divides by public methods only). All thresholds in `config.yaml`.
+- *Result (2026-10-25, test split):* God Class F1 0.280 / MCC 0.330 (precision 0.88, recall 0.17); Data Class F1 0.446 / MCC 0.384. PR-AUC is a single point for a hard rule.
 
 **Step 8 — Metrics models [GATE].** Logistic Regression (L2, balanced) → Random Forest (balanced_subsample) → **XGBoost** (`scale_pos_weight` from actual ratio) → optionally LightGBM. One binary classifier per smell. Feature Envy ablation: with and without relational features. Must beat Step 7.
+- *Result (2026-10-28, gate passed, user sign-off):* best model chosen by CV PR-AUC before test was read, threshold = out-of-fold max-F1. **Blob: LogReg F1 0.650 / MCC 0.538**; **Data Class: XGBoost F1 0.588 / MCC 0.469** (mean of 5 seeds, 88 test repos). Caveats: Blob is dominated by LOC — class size and the lenient `minor_plus` rule are possible explanations, not established ones, and a LOC ablation may follow; the Data Class MCC gain over the rule has a paired CI that includes 0; some tuned hyperparameters sit on the grid boundary and were not re-tuned. Details: FLOW.md Stage 8, `eval/results/step8_summary_20261028_154932.json`.
 
 ### Phase C — Embedding arm
 
-**Step 9 — Encode snippets.** Read cached snippets from Step 2 — no repo access needed. CodeBERT or UniXcoder, frozen, CPU, batched, cached, resumable. Both pooling strategies.
+**Step 9 — Encode snippets.** Read cached snippets from Step 2 — no repo access needed. **CodeBERT** (D-3 decided 2026-10-28: `microsoft/codebert-base`, revision pinned in `config.yaml`), frozen, CPU, batched, cached, resumable. Both pooling strategies.
 
 **Step 10 — Embedding models.** Frozen encoder, small head (logistic regression and shallow MLP). Don't fine-tune — 286 Blob and 140 Feature Envy positives make overfitting near-certain.
 
@@ -385,6 +389,7 @@ Matters because the tool shows confidence to a developer. Flag something at 90% 
 - **Long Method will score high.** Raw line count alone separates it at **AUC 0.981** (positive median 58 LOC vs negative 8). Near-definitional. Report it, don't lead with it.
 - **Feature Envy will score poorly.** Kappa −0.10, 140 positives. Line count alone gives AUC 0.713, which is a length confound not signal. Report as a documented limitation with the agreement evidence. Run 5+ seeds, mean ± std.
 - **Blob (+0.17) and Data Class (+0.26)** are the real results, both label-bounded.
+  - *Observed so far (Step 8, repository-level):* Blob MCC 0.538, Data Class MCC 0.469 — Blob is **above** the row-level literature figure (0.51), against the expectation here. The leakage checks passed (repository-disjoint split and folds, test read once), which rules out repository overlap but not every bias; LOC dominance and `minor_plus` are the candidate explanations to test.
 - **Metrics vs embeddings may show no clear winner** — published MLCQ work found exactly that. A null result is publishable under the corrected protocol.
 - **An unexpectedly high F1 is evidence of leakage, not success.** Check the split before celebrating.
 

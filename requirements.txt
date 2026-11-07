@@ -10,6 +10,8 @@ lightgbm>=4.0        # optional (Step 8)
 krippendorff>=0.6    # Step 5
 javalang>=0.13       # Step 2 relational features, Step 9 method splitting
 pytest>=8
-# Phase C (install when Step 9 starts; CPU wheels):
-# torch --index-url https://download.pytorch.org/whl/cpu
-# transformers>=4.40
+# Phase C (Step 9+). Install torch from the CPU index first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+# Exact versions of everything: requirements-lock.txt.
+torch==2.14.1
+transformers==5.20.2

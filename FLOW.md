@@ -5,7 +5,7 @@
 > **Requirements and rules:** [`PRD.md`](PRD.md). **Background:** [`heuristic-hound.md`](heuristic-hound.md). **Parameters:** [`config.yaml`](config.yaml).
 > Method level is **parked**. It appears below only where Step 2 stores raw data for later use.
 > **Data location:** generated data (`data/raw/…`, `data/processed/…` below) lives outside the repo in `~/HeuristicHound_local/` with the same layout; see `config.yaml` → `paths`. Split files and results stay in the repo under `eval/`.
-> **Where we are (2026-10-28):** Stages 1–2 done for all 522 repos. Stage 3 **passed its gate** (user sign-off 2026-10-25). Stages 5–7 run (2026-10-25). Stage 8 **passed its gate** (user sign-off 2026-10-28; locked models Blob = LogReg, Data Class = XGBoost; limitations in Stage 8 below). Encoder for Stages 9–10 decided: CodeBERT (D-3). Stages 9–12 are not built. One CK unit (eclipse/n4js, method samples only) is left `failed` and must be resolved before method level resumes. Status per step: PRD §0.1.
+> **Where we are (2026-10-28):** Stages 1–2 done for all 522 repos. Stage 3 **passed its gate** (user sign-off 2026-10-25). Stages 5–7 run (2026-10-25). Stage 8 **passed its gate** (user sign-off 2026-10-28; locked models Blob = LogReg, Data Class = XGBoost; limitations in Stage 8 below). Encoder for Stages 9–10 decided: CodeBERT (D-3). Steps 5–8 published in commit `3a16fdb`. Stages 9–12 are not built; next is Stage 9 (encode), after the user authorizes installing `torch` (CPU) + `transformers` and downloading CodeBERT. One CK unit (eclipse/n4js, method samples only) is left `failed` and must be resolved before method level resumes. Status per step: PRD §0.1.
 
 ---
 
@@ -95,7 +95,7 @@ clone ready
 manifest = "extracted"  ──►  DELETE clones/<repo_key>
 ```
 **The clone is deleted only after every output exists.** Snippets are what the embedding arm will use later, so Phase C needs no repo access.
-**Result:** 522 / 522 extracted. 2,308 / 2,340 class and 2,384 / 2,430 method snippets; the 78 gaps are samples whose `path` does not exist at the pinned commit.
+**Result:** 522 / 522 extracted. 2,340 / 2,340 class and 2,430 / 2,430 method snippets. (An earlier 2,308 / 2,384 came from an overlapping run on 2026-10-10; the three affected repos were re-extracted 2026-10-13. PRD Step 2, *Snippet counts*.)
 
 **Targeted recovery (no re-clone):** `recover_extraction.py` fetches only the files a failed output needs, at the pinned commit (GitHub contents API, blob SHA verified), per the list in `extraction.recoveries`:
 ```
@@ -180,11 +180,13 @@ features: WMC LOC NOM NOF CBO RFC LCOM LCOM* TCC LCC DIT NOC fan-in fan-out ATFD
 **GATE:** the best metrics model must beat the rule baseline on F1 and MCC for both smells. If not, stop and report.
 **Result (2026-10-28, `eval/results/step8_summary_20261028_154932.json`):** best = highest CV PR-AUC, fixed before test was read; threshold = out-of-fold max-F1, frozen. Blob LogReg F1 0.650 / MCC 0.538 vs rule 0.280 / 0.330; Data Class XGBoost F1 0.588 / MCC 0.469 vs rule 0.446 / 0.384 → **gate passed** (user sign-off 2026-10-28).
 Limitations: boundary hyperparameters not re-tuned (Blob LogReg C = 0.01, Data Class LogReg C = 100, RF `max_depth = None`); Blob predictions dominated by LOC — class size and `minor_plus` are possible explanations, not established causes, and the leakage checks do not rule out every bias (LOC ablation possible later); Data Class MCC gain's paired CI includes 0; CV-selected models stay locked (`metrics_models.locked_selection`) even where another model scored higher on test.
-Provenance (checked 2026-10-28): the Step 5–8 results files record `git_commit` 2b91d37 (HEAD when they ran), but they were **not** produced from that commit: it holds a stub `train_metrics.py`, no Step 8 config, and the pre-sensitivity `labels.py` / pre-PR-AUC-CI `rule_baseline.py`. They were produced from uncommitted working-tree code that was committed afterwards, together with the results. Supporting evidence, not proof: each code file's last modification precedes the results it produced, and each result's embedded config snapshot equals the committed `config.yaml` except for edits made after the run (`gates.metrics_beat_rules`, `metrics_models.locked_selection`, the D-3 encoder keys). No code hash was recorded in the results.
-Path fields (2026-10-28, after commit 7e978b5): in the 9 Step 7–8 results, `meta.split_file` and `predictions_file` held absolute machine paths; they now hold portable forms (`eval/splits/...`, `~/HeuristicHound_local/...`, resolved by `common.p`). Only those 15 values changed — scores, predictions, split hashes and config snapshots are byte-identical; the originals remain in 7e978b5. `common.write_results` / `train_metrics` now write portable paths (`common.portable_path`).
+Provenance (checked 2026-10-28): the Step 5–8 results files record `git_commit` 2b91d37 (HEAD when they ran), but they were **not** produced from that commit: it holds a stub `train_metrics.py`, no Step 8 config, and the pre-sensitivity `labels.py` / pre-PR-AUC-CI `rule_baseline.py`. They were produced from uncommitted working-tree code that was published afterwards, together with the results, in commit `3a16fdb` (2026-10-28). Supporting evidence, not proof: each code file's last modification precedes the results it produced, and each result's embedded config snapshot equals the committed `config.yaml` except for edits made after the run (`gates.metrics_beat_rules`, `metrics_models.locked_selection`, the D-3 encoder keys). No code hash was recorded in the results.
+Path fields (2026-10-28, before publishing): in the 9 Step 7–8 results, `meta.split_file` and `predictions_file` held absolute machine paths; they now hold portable forms (`eval/splits/...`, `~/HeuristicHound_local/...`, resolved by `common.p`). Only those 15 values changed — scores, predictions, split hashes and config snapshots are byte-identical (verified field by field). The fix was made in an unpublished intermediate commit that was squashed into `3a16fdb`; the original absolute-path versions are not in the published history. `common.write_results` / `train_metrics` now write portable paths (`common.portable_path`).
 
 ### Stage 9 encoder (D-3, decided 2026-10-28)
 CodeBERT (`microsoft/codebert-base`, HF revision pinned in `config.yaml` → `embeddings`). The PRD did not mandate CuBERT; CuBERT has no standard HuggingFace PyTorch checkpoint for frozen CPU encoding.
+Batch size (D-8, decided 2026-11-07): 16 — pilot peak RAM ~1.3 GB on the 16 GB machine, throughput close to the best measured; inputs sorted by token length (PRD §9 D-8).
+Vector per window (D-11): masked mean of the last layer (tied with `<s>`/CLS in a training-repo CV check). Hierarchical members (D-12): every method/constructor in the snippet incl. nested types, with leading Javadoc. Fields (D-13): methods only, as designed. Evidence: PRD §9.
 
 ### Stage 9 — Encode (Step 9)
 ```
@@ -255,7 +257,7 @@ eval/results/class_level_final_<timestamp>.json
 | Stop | After | The user checks | Blocks |
 |---|---|---|---|
 | Pilot review | Step 1 pilot (20 repos) | disk, time, failure rate | full fetch |
-| D-1, D-4, D-6, D-7 resolved | before the steps that need them | decisions in PRD §9 | those steps — **all four resolved**; D-3, D-8 (Step 9) and D-9 (Step 12) still open |
+| D-1, D-4, D-6, D-7 resolved | before the steps that need them | decisions in PRD §9 | those steps — **all four resolved**; D-3 and D-8 (Step 9) decided; D-9 (Step 12) still open |
 | **GATE** join | Step 3 | 30 matched rows are correct | Steps 5–12 — **passed 2026-10-25** |
 | n4js CK unit | Step 2 | resolve the `failed` unit (CK out of memory) | method level |
 | **GATE** metrics | Step 8 | learned model beats rule baseline | Phase C |

@@ -314,10 +314,35 @@ embeddings:
   default_encoder: codebert
   encoder_hf_id: microsoft/codebert-base
   encoder_revision: 3b0952feddeffad0063f274080e3c23d75e7eb39   # pinned HF commit (public, not gated; checked 2026-10-28)
+  # Outside OneDrive. Only the PyTorch weights + tokenizer files are downloaded (no TF/Flax/Rust).
+  hf_cache_dir: ~/HeuristicHound_local/models/hf
+  encoder_weights_sha256: 28b61fd8fa069f6bc966f4cb9572a4026ab2a784fca8fb224020d91b744e32d6   # pytorch_model.bin, HF LFS oid
   max_tokens: 512
   strategies: [truncation, hierarchical_pooling]
   hierarchical_pool: mean   # mean or attention
-  batch_size: null          # TODO: set based on measured 16GB RAM headroom during pilot
+  # D-8 (decided by the user, 2026-11-07, from the 2026-11-04 pilot): 16. Peak RAM ~1.3 GB at 512 tokens
+  # (16 GB machine), throughput close to the best measured; inputs sorted by token length before batching.
+  batch_size: 16
+  # D-11 (decided by the user, 2026-11-07): masked mean of the last layer over non-padding tokens
+  # (<s> and </s> included). CV check on training repos only (truncation, LogReg): mean vs <s>/CLS
+  # tied (Blob 0.506 / 0.506, Data Class 0.571 / 0.574); the pre-declared tie rule kept mean.
+  token_pooling: mean
+  store_cls: true            # <s> vectors stored alongside, unused unless the user approves a check
+  # D-12 (decided by the user, 2026-11-07): every method and constructor in the snippet, including those
+  # of nested types and enum-constant bodies (flagged by nested_depth), each with its leading Javadoc.
+  # 26% of Blob positives (8% of negatives) have nested-type methods (training repos); Javadoc pushes
+  # only 0.9% of methods over 512 tokens and keeps the text the same as truncation sees.
+  hierarchical_members: all_with_nested
+  method_text: with_javadoc
+  # D-13 (decided by the user, 2026-11-07): methods only (PRD design); fields are seen via accessors and
+  # by truncation (88% of Data Class positives have every field inside the truncation window).
+  store_method_vectors: true
+  checkpoint_every_batches: 25      # one shard per 25 batches (400 sequences)
+  tiny_snippet_bytes: 50            # flagged only; such snippets are still encoded
+  determinism_check_n: 20
+  determinism_tol: 1.0e-4
+  method_review_n: 20               # random methods in the pre-run extraction review (+ one per edge case)
+  stop_file: ~/HeuristicHound_local/STOP   # create to stop after the current shard
   reference_embeddings_repo: milica-skipina/ML-code-smell-detection   # validation only, not their splits
 
 # ---------------------------------------------------------------------------
