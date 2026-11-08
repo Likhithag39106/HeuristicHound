@@ -175,6 +175,27 @@ def test_weights_checksum_mismatch_aborts(cfg, tmp_path):
         E.Encoder.from_config(cfg)
 
 
+def test_truncation_rates_with_text_sample_ids(cfg, tmp_path):
+    """Step 5 stores sample_id as text; the rate table must still join it to the int64 index."""
+    labels = pd.DataFrame({"sample_id": ["1", "2", "3", "4"], "repository": ["r1", "r1", "r2", "r2"],
+                           "y_blob": [1, 0, 1, None], "y_data_class": [0, 0, 1, 1],
+                           "y_blob_major_critical_only": [1, 0, 0, None],
+                           "y_data_class_major_critical_only": [0, 0, 1, 0]})
+    labels.to_parquet(tmp_path / "labels.parquet")
+    (tmp_path / "splits").mkdir()
+    E.write_json(tmp_path / "splits" / "class_repo_split.json", {"train_repos": ["r1"], "test_repos": ["r2"]})
+    cfg["paths"].update(labels_class=str(tmp_path / "labels.parquet"), splits_dir=str(tmp_path / "splits"))
+    cfg["labels"]["sensitivity_severity_rules"] = ["major_critical_only"]
+    t_idx = pd.DataFrame({"sample_id": np.array([1, 2, 3, 4], np.int64), "truncated": [True, False, False, True],
+                          "n_tokens_full": [600, 10, 20, 900]})
+    r = E.truncation_rates(cfg, t_idx)
+    assert r["overall"] == {"n": 4, "rate": 0.5}
+    assert r["blob"]["primary"]["all"]["positive"]["over_max_tokens"] == 1
+    assert r["blob"]["primary"]["all"]["positive"]["n"] == 2          # sample 4 has no Blob label
+    assert r["data_class"]["primary"]["test"]["positive"]["rate"] == 0.5
+    assert r["blob"]["major_critical_only"]["train"]["positive"]["n"] == 1
+
+
 def test_method_units_follow_extraction():
     (m,) = extract_methods("class C { /** d */ int f() { return 1; } }")
     assert m.text == "/** d */ int f() { return 1; }"

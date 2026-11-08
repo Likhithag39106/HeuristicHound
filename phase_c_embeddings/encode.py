@@ -30,6 +30,7 @@ Outputs, under <paths.embeddings>/<default_encoder>/<revision[:12]>/:
     python -m phase_c_embeddings.encode --review-methods     # extraction review, no model needed
     python -m phase_c_embeddings.encode                      # both strategies (resumable)
     python -m phase_c_embeddings.encode --limit-shards 2     # stop after 2 new shards (smoke run)
+    python -m phase_c_embeddings.encode --report             # complete run: re-check, write results file
 
 Pause safely: create embeddings.stop_file (an empty file named STOP); the run finishes the current
 shard and exits. Resume: run the same command again.
@@ -490,6 +491,7 @@ def truncation_rates(cfg: dict, t_idx: pd.DataFrame) -> dict:
     """Share of class snippets over max_tokens, per smell x positive/negative, for the primary and the
     sensitivity label rules, over all samples and per split side. Descriptive only (drives nothing)."""
     labels = pd.read_parquet(p(cfg["paths"]["labels_class"]))
+    labels["sample_id"] = labels["sample_id"].astype("int64")     # stored as text by Step 5
     split = read_json(p(cfg["paths"]["splits_dir"]) / "class_repo_split.json")
     df = labels.merge(t_idx[["sample_id", "truncated", "n_tokens_full"]], on="sample_id", how="inner")
     side = np.where(df["repository"].isin(split["train_repos"]), "train", "test")
@@ -626,7 +628,10 @@ def run(args: argparse.Namespace, cfg: dict) -> None:
         log("finalized", strategy=name)
         print(f"[{name}] finalized -> {root / name}", flush=True)
 
-    if not finalized_now or not all((read_json(root / s / "manifest.json") or {}).get("finalized") for s in STRATEGIES):
+    if not all((read_json(root / s / "manifest.json") or {}).get("finalized") for s in STRATEGIES):
+        return
+    if not finalized_now and not args.report:
+        print("Both strategies are complete; use --report to re-run the checks and write the results file.")
         return
     checks = validate(root, enc, trunc_units, meth_units, cfg)
     t_idx = pd.read_parquet(root / "truncation" / "index.parquet")
@@ -657,6 +662,8 @@ def main(argv: list[str] | None = None) -> None:
                     help="write the method-extraction review (method_review.txt/.csv) and stop; no model")
     ap.add_argument("--strategy", choices=[*STRATEGIES, "all"], default="all")
     ap.add_argument("--limit-shards", type=int, help="stop after N new shards (smoke run)")
+    ap.add_argument("--report", action="store_true",
+                    help="when both strategies are complete: re-run the checks and write the results file")
     args = ap.parse_args(argv)
     cfg = load_config()
     if not cfg["gates"]["join_class_verified"]:
