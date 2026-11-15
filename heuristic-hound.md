@@ -350,7 +350,10 @@ Then delete the clone. For repos over a size threshold, scope CK to the enclosin
 
 **Step 9 — Encode snippets.** Read cached snippets from Step 2 — no repo access needed. **CodeBERT** (D-3 decided 2026-10-28: `microsoft/codebert-base`, revision pinned in `config.yaml`), frozen, CPU, batched, cached, resumable. Both pooling strategies.
 
+- *Done 2026-11-07:* all 2,340 class samples encoded with truncation and hierarchical mean pooling (D-11/12/13 in PRD §9); 96% of Blob positives exceed 512 tokens.
+
 **Step 10 — Embedding models.** Frozen encoder, small head (logistic regression and shallow MLP). Don't fine-tune — 286 Blob and 140 Feature Envy positives make overfitting near-certain.
+- *Result (2026-11-08, repository-level test):* chosen by CV PR-AUC. **Blob: truncation + LogReg F1 0.582 / MCC 0.436** (metrics arm 0.650 / 0.538) — hierarchical pooling hurts Blob, consistent with Blob being largely a size signal. **Data Class: hierarchical + LogReg F1 0.555 / MCC 0.422, PR-AUC 0.661** (metrics arm 0.588 / 0.469 / 0.605), with scores unrelated to class size (Spearman 0.01). Paired comparisons are Step 12. Details: FLOW.md Stage 10.
 
 ### Phase D — Fusion and results
 
