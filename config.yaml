@@ -345,6 +345,31 @@ embeddings:
   stop_file: ~/HeuristicHound_local/STOP   # create to stop after the current shard
   reference_embeddings_repo: milica-skipina/ML-code-smell-detection   # validation only, not their splits
 
+# Step 10 decisions (user, 2026-11-08): the grids below; fitted models saved with joblib; size diagnostic
+# (Spearman of OOF scores vs log LOC + a LOC-only CV reference) on training folds only. Seeds, tuning metric,
+# threshold policy and n_jobs come from metrics_models, so the protocol is Step 8's. Vectors come from Step 9
+# (embeddings.token_pooling selects vectors_<pooling>.npy).
+embedding_models:
+  strategies: [truncation, hierarchical_mean]
+  heads: [logistic_regression, mlp]
+  logistic_regression:
+    class_weight: balanced
+    max_iter: 5000
+    grid:
+      C: [0.0001, 0.001, 0.01, 0.1, 1]   # D-11 check chose 0.01 (Blob) / 0.001 (Data Class): inside the grid
+  mlp:
+    solver: adam
+    learning_rate_init: 0.001
+    max_iter: 300
+    early_stopping: false     # sklearn's early stopping holds out random rows, ignoring repositories
+    sample_weight: balanced   # MLPClassifier has no class_weight; balanced per-row weights instead
+    grid:
+      hidden_layer_sizes: [[64], [256]]
+      alpha: [0.0001, 0.01, 1.0]
+  save_models: true
+  models_dir: ~/HeuristicHound_local/models/step10
+  size_diagnostic: true
+
 # ---------------------------------------------------------------------------
 # Step 11 — fusion
 # ---------------------------------------------------------------------------

@@ -1,0 +1,1009 @@
+{
+  "meta": {
+    "created": "2026-11-08T17:52:14",
+    "git_commit": "8b58eddc10e9628ac82b80f225c9f5ad4789fa97",
+    "seed": 42,
+    "split_file": "eval/splits/class_repo_split.json",
+    "split_file_sha256": "3dee77a5d9a7676bfe92167657290f777883c82c3b88ad12f1124c1dde6c43dd",
+    "config": {
+      "seed": 42,
+      "gates": {
+        "join_class_verified": true,
+        "metrics_beat_rules": true
+      },
+      "paths": {
+        "datasets_dir": "datasets",
+        "samples_csv": "datasets/MLCQCodeSmellSamples.csv",
+        "survey_csv": "datasets/MLCQCodeSmellDevelopersSurvey.csv",
+        "raw_clones": "~/HeuristicHound_local/clones",
+        "ck_output": "~/HeuristicHound_local/data/processed/ck",
+        "snippets": "~/HeuristicHound_local/data/processed/snippets",
+        "relational": "~/HeuristicHound_local/data/processed/relational",
+        "embeddings": "~/HeuristicHound_local/data/processed/embeddings",
+        "class_dataset": "~/HeuristicHound_local/data/processed/class_dataset.parquet",
+        "join_report": "~/HeuristicHound_local/data/processed/join_report.json",
+        "join_manual_check": "~/HeuristicHound_local/data/processed/join_manual_check.csv",
+        "labels_class": "~/HeuristicHound_local/data/processed/labels_class.parquet",
+        "predictions": "~/HeuristicHound_local/data/processed/predictions",
+        "splits_dir": "eval/splits",
+        "results_dir": "eval/results"
+      },
+      "fetch": {
+        "pilot_repo_count": 20,
+        "clone_depth": 1,
+        "manifest_file": "~/HeuristicHound_local/data/raw/_progress_manifest.json",
+        "unresolved_file": "~/HeuristicHound_local/data/raw/unresolved.json",
+        "pilot_report_file": "~/HeuristicHound_local/data/raw/pilot_report.json",
+        "stop_file": "~/HeuristicHound_local/STOP",
+        "lock_file": "~/HeuristicHound_local/data/raw/_run.lock",
+        "repo_scope": "all",
+        "order_seed": 42,
+        "partial_clone_filter": "blob:none",
+        "sparse_checkout_patterns": [
+          "*.java",
+          "pom.xml",
+          "build.gradle",
+          "build.gradle.kts",
+          "settings.gradle",
+          "settings.gradle.kts"
+        ],
+        "git_timeout_s": 1800,
+        "repo_aliases": {
+          "eclipse/m2e-core": "eclipse-m2e/m2e-core",
+          "eclipse/dltk.core": "eclipse-dltk/dltk.core",
+          "eclipse/jgit": "eclipse-jgit/jgit",
+          "eclipse/egit": "eclipse-egit/egit",
+          "eclipse/egit-github": "eclipse-egit/egit-github",
+          "eclipse/eclipse.jdt.core": "eclipse-jdt/eclipse.jdt.core",
+          "eclipse/rap": "eclipse-rap/org.eclipse.rap",
+          "eclipse/webtools.sourceediting": "eclipse-sourceediting/sourceediting",
+          "eclipse/acceleo": "eclipse-acceleo/acceleo",
+          "eclipse/eclipse.platform.ui": "eclipse-platform/eclipse.platform.ui",
+          "eclipse/eclipse.platform.swt": "eclipse-platform/eclipse.platform.swt",
+          "eclipse/nebula.widgets.nattable": "eclipse-nattable/nattable",
+          "eclipse/linuxtools": "eclipse-linuxtools/org.eclipse.linuxtools",
+          "epam/DLab": "apache/incubator-dlab"
+        },
+        "software_heritage_repos": [
+          "apache/axis1-java",
+          "apache/axis2-java",
+          "apache/ctakes",
+          "apache/uima-ruta",
+          "apache/webservices-xmlschema",
+          "apache/wss4j",
+          "eclipse/bpmn2-modeler",
+          "eclipse/titan.EclipsePlug-ins",
+          "salesforce/Argus"
+        ],
+        "excluded_repos": [],
+        "swh_timeout_s": 10800,
+        "swh_poll_s": 60
+      },
+      "extraction": {
+        "ck_jar_path": "~/HeuristicHound_local/tools/ck-0.7.0-jar-with-dependencies.jar",
+        "java_executable": "~/HeuristicHound_local/tools/jdk-21.0.12.1+1/bin/java.exe",
+        "java_xmx": "6g",
+        "ck_timeout_s": 3600,
+        "ck_max_files_per_partition": 0,
+        "ck_variables_and_fields": true,
+        "large_repo_size_mb_threshold": null,
+        "scoped_repos_log": "~/HeuristicHound_local/data/processed/ck/_scoped_repos.json",
+        "rerun_ck_for_overwritten_classes": true,
+        "relational_method_level": true,
+        "keep_failed_clones": true,
+        "recovery_dir": "~/HeuristicHound_local/recovery",
+        "recovery_log": "~/HeuristicHound_local/data/processed/_recovery_log.json",
+        "recoveries": {
+          "ck_units": [
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/jdk.compiler/share/classes/com/sun/tools/javac/comp",
+              "exclude": [
+                "ArgumentAttr.java"
+              ],
+              "why": "CK 0.7.0 (bundled JDT) throws NullPointerException in LambdaExpression$LocalTypeSubstitutor when Attr.java and ArgumentAttr.java are resolved together (each alone, and the folder without either one, run fine). Neither is a sample file; ArgumentAttr.java and the three sample files (Annotate, Operators, Resolve) do not reference each other. The sample classes' metrics are identical with ArgumentAttr.java left out."
+            }
+          ],
+          "relational_files": [
+            {
+              "repo": "apache/groovy",
+              "path": "/src/main/java/org/codehaus/groovy/ast/tools/GenericsUtils.java",
+              "why": "javalang 0.13 cannot parse `ClassNode[]::new` (array constructor reference); see relational.py"
+            },
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Operators.java",
+              "why": "javalang 0.13 cannot parse `OperatorSymbol[]::new` (line 300); see relational.py"
+            },
+            {
+              "repo": "apache/aries-jax-rs-whiteboard",
+              "path": "/jax-rs.whiteboard/src/main/java/org/apache/aries/jax/rs/whiteboard/internal/AriesJaxrsServiceRuntime.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (9 occurrences)"
+            },
+            {
+              "repo": "apache/camel",
+              "path": "/components/camel-salesforce/camel-salesforce-component/src/main/java/org/apache/camel/component/salesforce/api/utils/QueryHelper.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (2 occurrences)"
+            },
+            {
+              "repo": "apache/incubator-dubbo",
+              "path": "/dubbo-registry/dubbo-registry-api/src/main/java/org/apache/dubbo/registry/integration/RegistryProtocol.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "apache/lucene-solr",
+              "path": "/lucene/sandbox/src/java/org/apache/lucene/search/BM25FQuery.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "apache/nifi",
+              "path": "/nifi-nar-bundles/nifi-jolt-record-bundle/nifi-jolt-record-processors/src/main/java/org/apache/nifi/processors/jolt/record/JoltTransformRecord.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "eclipse/smarthome",
+              "path": "/extensions/binding/org.eclipse.smarthome.binding.lifx/src/main/java/org/eclipse/smarthome/binding/lifx/internal/LifxLightStateChanger.java",
+              "why": "javalang 0.13 cannot parse a type-use annotation in type arguments (`Map<Integer, @Nullable List<...>>`, line 86)"
+            },
+            {
+              "repo": "oracle/graal",
+              "path": "/sulong/projects/com.oracle.truffle.llvm.runtime/src/com/oracle/truffle/llvm/runtime/LLVMContext.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/java.net.http/share/classes/jdk/internal/net/http/ResponseSubscribers.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "spring-projects/spring-data-redis",
+              "path": "/src/main/java/org/springframework/data/redis/connection/DefaultStringRedisConnection.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "spring-projects/spring-data-redis",
+              "path": "/src/main/java/org/springframework/data/redis/connection/ReactiveStreamCommands.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (2 occurrences)"
+            }
+          ],
+          "unresolved_ck_units": [
+            {
+              "repo": "eclipse/n4js",
+              "path": "/plugins/org.eclipse.n4js.ui/src-gen/org/eclipse/n4js/ui/contentassist/antlr/internal",
+              "affects": "4 function samples (6812825, 6823557, 6824306, 6829907) in InternalN4JSParser.java; no class samples",
+              "why": "CK OutOfMemoryError at java_xmx 6g in TightClassCohesion.getIndirectConnections (LCC's method-pair closure). The folder's only Java file is InternalN4JSParser.java (6.37 MB, generated ANTLR parser), so leaving a file out cannot help.",
+              "next": "retry this unit alone with a ~12g heap when that much RAM is free (machine has 15.7 GB)"
+            }
+          ]
+        },
+        "atfd_ignored_receiver_types": [
+          "String",
+          "Object",
+          "Integer",
+          "Long",
+          "Double",
+          "Float",
+          "Short",
+          "Byte",
+          "Boolean",
+          "Character",
+          "StringBuilder",
+          "StringBuffer",
+          "Class",
+          "List",
+          "ArrayList",
+          "LinkedList",
+          "Map",
+          "HashMap",
+          "TreeMap",
+          "LinkedHashMap",
+          "Set",
+          "HashSet",
+          "TreeSet",
+          "LinkedHashSet",
+          "Collection",
+          "Iterator",
+          "Optional",
+          "Collections",
+          "Arrays",
+          "Objects",
+          "Math",
+          "System",
+          "Thread"
+        ]
+      },
+      "join": {
+        "manual_check_rows": 30,
+        "manual_check_seed": 42,
+        "check_links": true,
+        "link_check": {
+          "file": "~/HeuristicHound_local/data/processed/link_check.csv",
+          "timeout_s": 30,
+          "max_retries": 3,
+          "backoff_s": 10,
+          "delay_s": {
+            "github.com": 1.0,
+            "archive.softwareheritage.org": 3.0,
+            "default": 2.0
+          }
+        }
+      },
+      "labels": {
+        "reviewer_aggregation": "max_severity",
+        "minor_severity_rule": "minor_plus",
+        "sensitivity_severity_rules": [
+          "major_critical_only"
+        ],
+        "agreement_metric": "krippendorff_alpha"
+      },
+      "splits": {
+        "group_column": "repository",
+        "test_size": 0.2,
+        "strategy": "GroupShuffleSplit",
+        "cv_folds": 5,
+        "cv_strategy": "StratifiedGroupKFold",
+        "positive_rate_tolerance_pp": 2,
+        "max_seed_attempts": 1000,
+        "row_level_contrast_experiment": true
+      },
+      "rule_baseline": {
+        "god_class": {
+          "atfd_gt": 5,
+          "wmc_gte": 47,
+          "tcc_lt": 0.3333333333
+        },
+        "data_class": {
+          "woc_lt": 0.3333333333,
+          "nopa_noam_gt_low": 3,
+          "wmc_lt_low": 31,
+          "nopa_noam_gt_high": 5,
+          "wmc_lt_high": 47
+        }
+      },
+      "metrics_models": {
+        "order": [
+          "logistic_regression",
+          "random_forest",
+          "xgboost"
+        ],
+        "seeds": [
+          42,
+          43,
+          44,
+          45,
+          46
+        ],
+        "features": [
+          "ck_wmc",
+          "ck_loc",
+          "ck_totalMethodsQty",
+          "ck_totalFieldsQty",
+          "ck_cbo",
+          "ck_rfc",
+          "ck_lcom",
+          "ck_lcom*",
+          "ck_tcc",
+          "ck_lcc",
+          "ck_dit",
+          "ck_noc",
+          "ck_fanin",
+          "ck_fanout",
+          "atfd"
+        ],
+        "negative_is_missing": [
+          "ck_tcc",
+          "ck_lcc"
+        ],
+        "missing_indicators": [
+          "ck_tcc",
+          "ck_lcc",
+          "ck_lcom*"
+        ],
+        "log1p_features": [
+          "ck_wmc",
+          "ck_loc",
+          "ck_totalMethodsQty",
+          "ck_totalFieldsQty",
+          "ck_cbo",
+          "ck_rfc",
+          "ck_lcom",
+          "ck_dit",
+          "ck_noc",
+          "ck_fanin",
+          "ck_fanout",
+          "atfd"
+        ],
+        "tuning_metric": "pr_auc",
+        "threshold_policy": "oof_max_f1",
+        "permutation_importance_repeats": 10,
+        "n_jobs": -1,
+        "logistic_regression": {
+          "penalty": "l2",
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "grid": {
+            "C": [
+              0.01,
+              0.1,
+              1,
+              10,
+              100
+            ]
+          }
+        },
+        "random_forest": {
+          "class_weight": "balanced_subsample",
+          "n_estimators": 500,
+          "grid": {
+            "max_depth": [
+              null,
+              5,
+              10
+            ],
+            "min_samples_leaf": [
+              1,
+              5,
+              10
+            ],
+            "max_features": [
+              "sqrt",
+              0.5
+            ]
+          }
+        },
+        "xgboost": {
+          "scale_pos_weight": "auto",
+          "subsample": 0.8,
+          "colsample_bytree": 0.8,
+          "tree_method": "hist",
+          "grid": {
+            "max_depth": [
+              2,
+              3,
+              4,
+              6
+            ],
+            "learning_rate": [
+              0.03,
+              0.1
+            ],
+            "n_estimators": [
+              200,
+              500
+            ],
+            "min_child_weight": [
+              1,
+              5
+            ]
+          }
+        },
+        "locked_selection": {
+          "blob": {
+            "model": "logistic_regression",
+            "params": {
+              "C": 0.01
+            },
+            "cv_pr_auc": 0.6511
+          },
+          "data_class": {
+            "model": "xgboost",
+            "params": {
+              "learning_rate": 0.03,
+              "max_depth": 2,
+              "min_child_weight": 5,
+              "n_estimators": 200
+            },
+            "cv_pr_auc": 0.5745
+          },
+          "predictions_dir": "~/HeuristicHound_local/data/processed/predictions/metrics"
+        },
+        "min_seeds_below_n_positives": 200,
+        "n_seeds_when_below_threshold": 5
+      },
+      "embeddings": {
+        "candidate_encoders": [
+          "codebert",
+          "unixcoder",
+          "cubert",
+          "codet5"
+        ],
+        "default_encoder": "codebert",
+        "encoder_hf_id": "microsoft/codebert-base",
+        "encoder_revision": "3b0952feddeffad0063f274080e3c23d75e7eb39",
+        "hf_cache_dir": "~/HeuristicHound_local/models/hf",
+        "encoder_weights_sha256": "28b61fd8fa069f6bc966f4cb9572a4026ab2a784fca8fb224020d91b744e32d6",
+        "max_tokens": 512,
+        "strategies": [
+          "truncation",
+          "hierarchical_pooling"
+        ],
+        "hierarchical_pool": "mean",
+        "batch_size": 16,
+        "token_pooling": "mean",
+        "store_cls": true,
+        "hierarchical_members": "all_with_nested",
+        "method_text": "with_javadoc",
+        "store_method_vectors": true,
+        "checkpoint_every_batches": 25,
+        "tiny_snippet_bytes": 50,
+        "determinism_check_n": 20,
+        "determinism_tol": 0.0001,
+        "method_review_n": 20,
+        "stop_file": "~/HeuristicHound_local/STOP",
+        "reference_embeddings_repo": "milica-skipina/ML-code-smell-detection"
+      },
+      "embedding_models": {
+        "strategies": [
+          "truncation",
+          "hierarchical_mean"
+        ],
+        "heads": [
+          "logistic_regression",
+          "mlp"
+        ],
+        "logistic_regression": {
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "grid": {
+            "C": [
+              0.0001,
+              0.001,
+              0.01,
+              0.1,
+              1
+            ]
+          }
+        },
+        "mlp": {
+          "solver": "adam",
+          "learning_rate_init": 0.001,
+          "max_iter": 300,
+          "early_stopping": false,
+          "sample_weight": "balanced",
+          "grid": {
+            "hidden_layer_sizes": [
+              [
+                64
+              ],
+              [
+                256
+              ]
+            ],
+            "alpha": [
+              0.0001,
+              0.01,
+              1.0
+            ]
+          }
+        },
+        "save_models": true,
+        "models_dir": "~/HeuristicHound_local/models/step10",
+        "size_diagnostic": true
+      },
+      "fusion": {
+        "early": {
+          "embedding_pca_dims": 50,
+          "scale_metrics": true
+        },
+        "late": {
+          "stacker": "logistic_regression"
+        }
+      },
+      "evaluation": {
+        "threshold_policy": "global_per_smell",
+        "calibration_method": "isotonic",
+        "headline_metrics": [
+          "f1",
+          "mcc",
+          "pr_auc"
+        ],
+        "bootstrap_n": 2000,
+        "bootstrap_alpha": 0.05,
+        "ood_dataset": null
+      }
+    }
+  },
+  "step": 10,
+  "arm": "embedding",
+  "leakage_checks": [
+    "primary train/test repositories disjoint",
+    "each CV fold: train/val repositories disjoint",
+    "no test repository in any CV fold",
+    "CV validation folds partition the training repositories exactly",
+    "training data holds training repositories only",
+    "training row counts equal Step 8's ({'blob': 1749, 'data_class': 1753})",
+    "test data loaded only after tuning, thresholds and model selection were fixed"
+  ],
+  "threshold_policy": "oof_max_f1",
+  "selected_for_smell": false,
+  "strategy": "truncation",
+  "head": "mlp",
+  "model": "truncation_mlp",
+  "smell": "data_class",
+  "target": "y_data_class",
+  "inputs": {
+    "vectors_file": "~/HeuristicHound_local/data/processed/embeddings/codebert/3b0952feddef/truncation/vectors_mean.npy",
+    "vectors_sha256": "57b5e4e88038993b1f82692cec850fec8767a54bb881681c4d13f7c70c95c2a9",
+    "step9_fingerprint_id": "1c6ae0875105f68a",
+    "token_pooling": "mean"
+  },
+  "n_train": 1753,
+  "n_train_pos": 363,
+  "n_train_repos": 349,
+  "dim": 768,
+  "tuning": {
+    "tuning_seed": 42,
+    "metric": "pr_auc",
+    "best_params": {
+      "alpha": 1.0,
+      "hidden_layer_sizes": [
+        256
+      ]
+    },
+    "best_cv_pr_auc_mean": 0.5180925598270052,
+    "best_cv_pr_auc_std": 0.052715520820242584,
+    "best_on_grid_edge": {
+      "hidden_layer_sizes": true,
+      "alpha": true
+    },
+    "grid": [
+      {
+        "params": {
+          "alpha": 0.0001,
+          "hidden_layer_sizes": [
+            64
+          ]
+        },
+        "cv_pr_auc_mean": 0.4622841205217011,
+        "cv_pr_auc_std": 0.03005736643409376,
+        "cv_pr_auc_folds": [
+          0.40515169071722373,
+          0.4824940149257325,
+          0.48510785791412375,
+          0.47992504860294,
+          0.45874199044848507
+        ]
+      },
+      {
+        "params": {
+          "alpha": 0.0001,
+          "hidden_layer_sizes": [
+            256
+          ]
+        },
+        "cv_pr_auc_mean": 0.4656374052922307,
+        "cv_pr_auc_std": 0.031421292260856375,
+        "cv_pr_auc_folds": [
+          0.4513372411180517,
+          0.4813586971211254,
+          0.4931073216147698,
+          0.4918913415967912,
+          0.4104924250104154
+        ]
+      },
+      {
+        "params": {
+          "alpha": 0.01,
+          "hidden_layer_sizes": [
+            64
+          ]
+        },
+        "cv_pr_auc_mean": 0.47127770405530195,
+        "cv_pr_auc_std": 0.028317224439162677,
+        "cv_pr_auc_folds": [
+          0.423574072016127,
+          0.48650987786886324,
+          0.508937990456018,
+          0.4745956173510535,
+          0.4627709625844484
+        ]
+      },
+      {
+        "params": {
+          "alpha": 0.01,
+          "hidden_layer_sizes": [
+            256
+          ]
+        },
+        "cv_pr_auc_mean": 0.47153721441713364,
+        "cv_pr_auc_std": 0.02447592149113857,
+        "cv_pr_auc_folds": [
+          0.4480538826436626,
+          0.49093456139444064,
+          0.49169612345579017,
+          0.49117816784340257,
+          0.43582333674837237
+        ]
+      },
+      {
+        "params": {
+          "alpha": 1.0,
+          "hidden_layer_sizes": [
+            64
+          ]
+        },
+        "cv_pr_auc_mean": 0.508900236670701,
+        "cv_pr_auc_std": 0.030063524250505798,
+        "cv_pr_auc_folds": [
+          0.49481429280804134,
+          0.5048223975468347,
+          0.5666748971406291,
+          0.49862403361355445,
+          0.4795655622444451
+        ]
+      },
+      {
+        "params": {
+          "alpha": 1.0,
+          "hidden_layer_sizes": [
+            256
+          ]
+        },
+        "cv_pr_auc_mean": 0.5180925598270052,
+        "cv_pr_auc_std": 0.052715520820242584,
+        "cv_pr_auc_folds": [
+          0.5576923262651393,
+          0.5202979322029192,
+          0.5711796593256504,
+          0.5206520250003129,
+          0.420640856341004
+        ]
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "threshold": 0.512971818447113,
+      "oof_f1_at_threshold": 0.5302325581395348,
+      "oof_pr_auc_pooled": 0.4907241890583373,
+      "cv_pr_auc_folds": [
+        0.5576923262651393,
+        0.5202979322029192,
+        0.5711796593256504,
+        0.5206520250003129,
+        0.420640856341004
+      ]
+    },
+    {
+      "seed": 43,
+      "threshold": 0.4927697777748108,
+      "oof_f1_at_threshold": 0.49555555555555564,
+      "oof_pr_auc_pooled": 0.4433098586165946,
+      "cv_pr_auc_folds": [
+        0.49027488989191037,
+        0.5051797684608476,
+        0.5028420996740746,
+        0.45252098721155365,
+        0.4357152727233957
+      ]
+    },
+    {
+      "seed": 44,
+      "threshold": 0.5585696697235107,
+      "oof_f1_at_threshold": 0.4987531172069825,
+      "oof_pr_auc_pooled": 0.41680822084162605,
+      "cv_pr_auc_folds": [
+        0.46472559501456423,
+        0.5113244193376075,
+        0.4845065402595701,
+        0.41842492310994506,
+        0.36958719865298384
+      ]
+    },
+    {
+      "seed": 45,
+      "threshold": 0.4114692807197571,
+      "oof_f1_at_threshold": 0.5293466223698782,
+      "oof_pr_auc_pooled": 0.4664498706650553,
+      "cv_pr_auc_folds": [
+        0.4412306528929048,
+        0.5233123651471218,
+        0.5768714154637362,
+        0.46714116772193087,
+        0.4323249546822442
+      ]
+    },
+    {
+      "seed": 46,
+      "threshold": 0.5363532900810242,
+      "oof_f1_at_threshold": 0.5255972696245734,
+      "oof_pr_auc_pooled": 0.471125061359438,
+      "cv_pr_auc_folds": [
+        0.4809799462159547,
+        0.47689745035497294,
+        0.5671363144688861,
+        0.48724263889861963,
+        0.47193130803016814
+      ]
+    }
+  ],
+  "seed_averaged": {
+    "threshold": 0.48529539108276365,
+    "oof_f1_at_threshold": 0.5531428571428572,
+    "oof_pr_auc_pooled": 0.49854832347899264
+  },
+  "train_seconds": 357.0,
+  "mlp_convergence": {
+    "fits": 60,
+    "hit_max_iter": 0,
+    "note": "fits that stopped at max_iter (no early stopping by design)"
+  },
+  "size_diagnostic": {
+    "spearman_oof_vs_log_loc": {
+      "all": 0.176610367755383,
+      "within_positive": 0.05294962049150253,
+      "within_negative": 0.1702436525232964
+    },
+    "note": "seed-averaged out-of-fold scores, training repositories only"
+  },
+  "test": {
+    "n_test": 585,
+    "n_test_pos": 122,
+    "n_test_repos": 88,
+    "primary": {
+      "mean_std_over_seeds": {
+        "f1": {
+          "mean": 0.5271902520506005,
+          "std": 0.013698825047247624
+        },
+        "mcc": {
+          "mean": 0.4076949230758874,
+          "std": 0.009916169106554735
+        },
+        "pr_auc": {
+          "mean": 0.5460165424228098,
+          "std": 0.0157602871344648
+        }
+      },
+      "seed_averaged_scores": {
+        "metrics": {
+          "f1": 0.5367965367965368,
+          "mcc": 0.4243377521247745,
+          "pr_auc": 0.5614754050650619,
+          "pr_auc_single_point": false,
+          "precision": 0.5688073394495413,
+          "recall": 0.5081967213114754,
+          "threshold": 0.48529539108276365,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 109
+        },
+        "ci": {
+          "f1": {
+            "metric": "f1",
+            "point": 0.5367965367965368,
+            "ci_low": 0.44271835035193813,
+            "ci_high": 0.6279934957025177,
+            "n_boot_valid": 2000,
+            "n_groups": 88
+          },
+          "mcc": {
+            "metric": "mcc",
+            "point": 0.4243377521247745,
+            "ci_low": 0.30921834223611955,
+            "ci_high": 0.5371492486000244,
+            "n_boot_valid": 2000,
+            "n_groups": 88
+          },
+          "pr_auc": {
+            "metric": "pr_auc",
+            "point": 0.5614754050650619,
+            "ci_low": 0.4606661784859407,
+            "ci_high": 0.6705711032163101,
+            "n_boot_valid": 2000,
+            "n_groups": 88
+          }
+        }
+      }
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "primary": {
+          "f1": 0.5254237288135594,
+          "mcc": 0.4060479788285541,
+          "pr_auc": 0.5438656709092078,
+          "pr_auc_single_point": false,
+          "precision": 0.543859649122807,
+          "recall": 0.5081967213114754,
+          "threshold": 0.512971818447113,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 114
+        },
+        "major_critical_only": {
+          "f1": 0.44808743169398907,
+          "mcc": 0.368659831178154,
+          "pr_auc": 0.4624819944557756,
+          "pr_auc_single_point": false,
+          "precision": 0.35964912280701755,
+          "recall": 0.5942028985507246,
+          "threshold": 0.512971818447113,
+          "n": 585,
+          "n_pos": 69,
+          "n_pred_pos": 114
+        }
+      },
+      {
+        "seed": 43,
+        "primary": {
+          "f1": 0.5418326693227091,
+          "mcc": 0.41708340029074653,
+          "pr_auc": 0.5657843991837171,
+          "pr_auc_single_point": false,
+          "precision": 0.5271317829457365,
+          "recall": 0.5573770491803278,
+          "threshold": 0.4927697777748108,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 129
+        },
+        "major_critical_only": {
+          "f1": 0.45454545454545453,
+          "mcc": 0.38073358637442023,
+          "pr_auc": 0.5020706033695791,
+          "pr_auc_single_point": false,
+          "precision": 0.3488372093023256,
+          "recall": 0.6521739130434783,
+          "threshold": 0.4927697777748108,
+          "n": 585,
+          "n_pos": 69,
+          "n_pred_pos": 129
+        }
+      },
+      {
+        "seed": 44,
+        "primary": {
+          "f1": 0.5232067510548524,
+          "mcc": 0.40250059149214223,
+          "pr_auc": 0.5381320315357453,
+          "pr_auc_single_point": false,
+          "precision": 0.5391304347826087,
+          "recall": 0.5081967213114754,
+          "threshold": 0.5585696697235107,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 115
+        },
+        "major_critical_only": {
+          "f1": 0.44565217391304346,
+          "mcc": 0.36587083488630245,
+          "pr_auc": 0.4625491161824534,
+          "pr_auc_single_point": false,
+          "precision": 0.3565217391304348,
+          "recall": 0.5942028985507246,
+          "threshold": 0.5585696697235107,
+          "n": 585,
+          "n_pos": 69,
+          "n_pred_pos": 115
+        }
+      },
+      {
+        "seed": 45,
+        "primary": {
+          "f1": 0.5409836065573771,
+          "mcc": 0.420033282583295,
+          "pr_auc": 0.5603468258011333,
+          "pr_auc_single_point": false,
+          "precision": 0.5409836065573771,
+          "recall": 0.5409836065573771,
+          "threshold": 0.4114692807197571,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 122
+        },
+        "major_critical_only": {
+          "f1": 0.4607329842931937,
+          "mcc": 0.3862586579726758,
+          "pr_auc": 0.5063820190823743,
+          "pr_auc_single_point": false,
+          "precision": 0.36065573770491804,
+          "recall": 0.6376811594202898,
+          "threshold": 0.4114692807197571,
+          "n": 585,
+          "n_pos": 69,
+          "n_pred_pos": 122
+        }
+      },
+      {
+        "seed": 46,
+        "primary": {
+          "f1": 0.5045045045045045,
+          "mcc": 0.3928093621846992,
+          "pr_auc": 0.5219537846842459,
+          "pr_auc_single_point": false,
+          "precision": 0.56,
+          "recall": 0.45901639344262296,
+          "threshold": 0.5363532900810242,
+          "n": 585,
+          "n_pos": 122,
+          "n_pred_pos": 100
+        },
+        "major_critical_only": {
+          "f1": 0.4260355029585799,
+          "mcc": 0.3407555890787921,
+          "pr_auc": 0.43245240398948626,
+          "pr_auc_single_point": false,
+          "precision": 0.36,
+          "recall": 0.5217391304347826,
+          "threshold": 0.5363532900810242,
+          "n": 585,
+          "n_pos": 69,
+          "n_pred_pos": 100
+        }
+      }
+    ],
+    "sensitivity_report_only": {
+      "major_critical_only": {
+        "label_column": "y_data_class_major_critical_only",
+        "note": "primary-trained models and primary OOF thresholds; these labels drive no training or selection",
+        "mean_std_over_seeds": {
+          "f1": {
+            "mean": 0.44701070948085214,
+            "std": 0.011730621871658891
+          },
+          "mcc": {
+            "mean": 0.3684556998980689,
+            "std": 0.015758877806754893
+          },
+          "pr_auc": {
+            "mean": 0.4731872274159337,
+            "std": 0.027652272467878745
+          }
+        },
+        "seed_averaged_scores": {
+          "metrics": {
+            "f1": 0.449438202247191,
+            "mcc": 0.3694511537955869,
+            "pr_auc": 0.4972196454277162,
+            "pr_auc_single_point": false,
+            "precision": 0.3669724770642202,
+            "recall": 0.5797101449275363,
+            "threshold": 0.48529539108276365,
+            "n": 585,
+            "n_pos": 69,
+            "n_pred_pos": 109
+          },
+          "ci": {
+            "f1": {
+              "metric": "f1",
+              "point": 0.449438202247191,
+              "ci_low": 0.3440552995391705,
+              "ci_high": 0.5462986827033218,
+              "n_boot_valid": 2000,
+              "n_groups": 88
+            },
+            "mcc": {
+              "metric": "mcc",
+              "point": 0.3694511537955869,
+              "ci_low": 0.2428545987960715,
+              "ci_high": 0.47981092114283513,
+              "n_boot_valid": 2000,
+              "n_groups": 88
+            },
+            "pr_auc": {
+              "metric": "pr_auc",
+              "point": 0.4972196454277162,
+              "ci_low": 0.35241748386196936,
+              "ci_high": 0.63199392830544,
+              "n_boot_valid": 2000,
+              "n_groups": 88
+            }
+          }
+        }
+      }
+    }
+  },
+  "predictions_file": "~/HeuristicHound_local/data/processed/predictions/embeddings/truncation_mlp_data_class_20261108_174909.parquet",
+  "model_files": {
+    "files": [
+      "~/HeuristicHound_local/models/step10/20261108_174909/truncation_mlp_data_class_seed42.joblib",
+      "~/HeuristicHound_local/models/step10/20261108_174909/truncation_mlp_data_class_seed43.joblib",
+      "~/HeuristicHound_local/models/step10/20261108_174909/truncation_mlp_data_class_seed44.joblib",
+      "~/HeuristicHound_local/models/step10/20261108_174909/truncation_mlp_data_class_seed45.joblib",
+      "~/HeuristicHound_local/models/step10/20261108_174909/truncation_mlp_data_class_seed46.joblib"
+    ],
+    "sklearn": "1.9.1"
+  }
+}
