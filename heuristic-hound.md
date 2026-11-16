@@ -361,6 +361,7 @@ Then delete the clone. For repos over a size threshold, scope CK to the enclosin
 - *Result (2026-11-15, repository-level test):* CV selected the late stacker (nested cross-fitted) for both smells. **Blob: F1 0.660 / MCC 0.546** — essentially the metrics arm (0.650 / 0.538); the embeddings add little beyond size. **Data Class: F1 0.633 / MCC 0.528 / PR-AUC 0.699**, above both arms (metrics 0.588 / 0.469 / 0.605), the two arms weighted equally — the representations complement each other here. Paired tests are Step 12. Details: FLOW.md Stage 11.
 
 **Step 12 — Threshold, evaluation, OOD [GATE].** Freeze one global threshold per smell, selected on validation folds. Isotonic calibration. Produce the results table. Re-run under the row-level split and report the delta. Apply winning arm to CrowdSmelling unmodified.
+- *Scope (user decision 2026-11-16):* the evaluation and the main paper are **repository-level**. The row-level run is **contrast-only**, kept for research transparency in separate results sections and files (FLOW.md Stage 12); it never fed back into any model, selection, threshold or calibration. CrowdSmelling (D-9) deferred.
 
 **Step 13 — Paper.** Written from the results files.
 

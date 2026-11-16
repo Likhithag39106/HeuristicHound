@@ -443,4 +443,28 @@ evaluation:
   headline_metrics: [f1, mcc, pr_auc]   # never accuracy
   bootstrap_n: 2000                     # resamples of TEST repositories for 95% CIs
   bootstrap_alpha: 0.05
-  ood_dataset: null   # TODO: set path once D3 (CrowdSmelling / Zenodo 6555241) is downloaded at Step 12
+  # D-9 deferred (user, 2026-11-16): no CrowdSmelling run in Step 12; stays null until the stretch item is taken up.
+  ood_dataset: null
+  # Step 12 decisions (user, 2026-11-16). Arms are the locked selections of Steps 7-11; nothing is re-selected.
+  # Embedding arms use the CV-best head per strategy (Step 10 summary best_head_per_strategy).
+  arms: [rule, metrics, embedding_truncation, embedding_hierarchical_mean, fusion]
+  calibration_mode: crossfit_oof   # isotonic fitted on the other 4 folds' OOF scores (deployed: on all OOF scores)
+  calibration_scores: seed_averaged   # final prediction = 5-seed ensemble; per-seed mean +/- std reported alongside
+  ece_bins: 10                     # expected calibration error (report-only), equal-width bins
+  paired_comparisons:              # A - B on the same resampled test repositories; rule pairs: F1 and MCC only
+    - [fusion, metrics]
+    - [fusion, embedding_truncation]
+    - [fusion, embedding_hierarchical_mean]
+    - [metrics, embedding_truncation]
+    - [metrics, embedding_hierarchical_mean]
+    - [fusion, rule]
+    - [metrics, rule]
+    - [embedding_truncation, rule]
+    - [embedding_hierarchical_mean, rule]
+  multiple_comparison_correction: none   # every comparison reported, with their number
+  contrast:                        # row-level split (eval/splits/class_rowlevel_contrast.json), Step 12 only
+    refit: locked_params           # same models and hyperparameters as the primary pipeline, no re-tuning
+    cv_strategy: StratifiedKFold   # row-level folds inside the contrast training rows (the leaky protocol)
+    cv_folds: 5
+    fold_seed: 42
+  per_repo_csv: true

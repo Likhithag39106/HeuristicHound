@@ -237,6 +237,7 @@ row-level contrast: rerun final pipeline on CONTRAST_ONLY split → report delta
 eval/results/class_level_final_<timestamp>.json
 ```
 **STOP.** The user reviews the results. That is the end of class level.
+**Primary evaluation = repository-level only (user decision 2026-11-16).** Every reported result, selection, threshold and calibrator is repository-level, and the main paper focuses on it. The row-level split is **CONTRAST_ONLY**: one refit with the locked models, kept for research transparency in its own places — the `row_level_contrast` section of `eval/results/class_level_final_20261116_090456.json`, `predictions/final/contrast/`, and the follow-up check 1 (`phase_d_results/contrast_check.py`, `eval/results/contrast_check_seen_repos_20261116_093840.json`). It never fed back into training, tuning, selection, thresholds or calibration.
 
 ---
 

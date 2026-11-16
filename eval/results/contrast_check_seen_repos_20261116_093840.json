@@ -1,0 +1,2171 @@
+{
+  "meta": {
+    "created": "2026-11-16T09:38:40",
+    "git_commit": "51de5ebda30d3798e7bedc70f02b5c6c8d508044",
+    "seed": 42,
+    "split_file": "eval/splits/class_rowlevel_contrast.json",
+    "split_file_sha256": "66391b605014b1a1a6819a57a8976de0dd47e9f9d184a291f27846256d4a08ed",
+    "config": {
+      "seed": 42,
+      "gates": {
+        "join_class_verified": true,
+        "metrics_beat_rules": true
+      },
+      "paths": {
+        "datasets_dir": "datasets",
+        "samples_csv": "datasets/MLCQCodeSmellSamples.csv",
+        "survey_csv": "datasets/MLCQCodeSmellDevelopersSurvey.csv",
+        "raw_clones": "~/HeuristicHound_local/clones",
+        "ck_output": "~/HeuristicHound_local/data/processed/ck",
+        "snippets": "~/HeuristicHound_local/data/processed/snippets",
+        "relational": "~/HeuristicHound_local/data/processed/relational",
+        "embeddings": "~/HeuristicHound_local/data/processed/embeddings",
+        "class_dataset": "~/HeuristicHound_local/data/processed/class_dataset.parquet",
+        "join_report": "~/HeuristicHound_local/data/processed/join_report.json",
+        "join_manual_check": "~/HeuristicHound_local/data/processed/join_manual_check.csv",
+        "labels_class": "~/HeuristicHound_local/data/processed/labels_class.parquet",
+        "predictions": "~/HeuristicHound_local/data/processed/predictions",
+        "splits_dir": "eval/splits",
+        "results_dir": "eval/results"
+      },
+      "fetch": {
+        "pilot_repo_count": 20,
+        "clone_depth": 1,
+        "manifest_file": "~/HeuristicHound_local/data/raw/_progress_manifest.json",
+        "unresolved_file": "~/HeuristicHound_local/data/raw/unresolved.json",
+        "pilot_report_file": "~/HeuristicHound_local/data/raw/pilot_report.json",
+        "stop_file": "~/HeuristicHound_local/STOP",
+        "lock_file": "~/HeuristicHound_local/data/raw/_run.lock",
+        "repo_scope": "all",
+        "order_seed": 42,
+        "partial_clone_filter": "blob:none",
+        "sparse_checkout_patterns": [
+          "*.java",
+          "pom.xml",
+          "build.gradle",
+          "build.gradle.kts",
+          "settings.gradle",
+          "settings.gradle.kts"
+        ],
+        "git_timeout_s": 1800,
+        "repo_aliases": {
+          "eclipse/m2e-core": "eclipse-m2e/m2e-core",
+          "eclipse/dltk.core": "eclipse-dltk/dltk.core",
+          "eclipse/jgit": "eclipse-jgit/jgit",
+          "eclipse/egit": "eclipse-egit/egit",
+          "eclipse/egit-github": "eclipse-egit/egit-github",
+          "eclipse/eclipse.jdt.core": "eclipse-jdt/eclipse.jdt.core",
+          "eclipse/rap": "eclipse-rap/org.eclipse.rap",
+          "eclipse/webtools.sourceediting": "eclipse-sourceediting/sourceediting",
+          "eclipse/acceleo": "eclipse-acceleo/acceleo",
+          "eclipse/eclipse.platform.ui": "eclipse-platform/eclipse.platform.ui",
+          "eclipse/eclipse.platform.swt": "eclipse-platform/eclipse.platform.swt",
+          "eclipse/nebula.widgets.nattable": "eclipse-nattable/nattable",
+          "eclipse/linuxtools": "eclipse-linuxtools/org.eclipse.linuxtools",
+          "epam/DLab": "apache/incubator-dlab"
+        },
+        "software_heritage_repos": [
+          "apache/axis1-java",
+          "apache/axis2-java",
+          "apache/ctakes",
+          "apache/uima-ruta",
+          "apache/webservices-xmlschema",
+          "apache/wss4j",
+          "eclipse/bpmn2-modeler",
+          "eclipse/titan.EclipsePlug-ins",
+          "salesforce/Argus"
+        ],
+        "excluded_repos": [],
+        "swh_timeout_s": 10800,
+        "swh_poll_s": 60
+      },
+      "extraction": {
+        "ck_jar_path": "~/HeuristicHound_local/tools/ck-0.7.0-jar-with-dependencies.jar",
+        "java_executable": "~/HeuristicHound_local/tools/jdk-21.0.12.1+1/bin/java.exe",
+        "java_xmx": "6g",
+        "ck_timeout_s": 3600,
+        "ck_max_files_per_partition": 0,
+        "ck_variables_and_fields": true,
+        "large_repo_size_mb_threshold": null,
+        "scoped_repos_log": "~/HeuristicHound_local/data/processed/ck/_scoped_repos.json",
+        "rerun_ck_for_overwritten_classes": true,
+        "relational_method_level": true,
+        "keep_failed_clones": true,
+        "recovery_dir": "~/HeuristicHound_local/recovery",
+        "recovery_log": "~/HeuristicHound_local/data/processed/_recovery_log.json",
+        "recoveries": {
+          "ck_units": [
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/jdk.compiler/share/classes/com/sun/tools/javac/comp",
+              "exclude": [
+                "ArgumentAttr.java"
+              ],
+              "why": "CK 0.7.0 (bundled JDT) throws NullPointerException in LambdaExpression$LocalTypeSubstitutor when Attr.java and ArgumentAttr.java are resolved together (each alone, and the folder without either one, run fine). Neither is a sample file; ArgumentAttr.java and the three sample files (Annotate, Operators, Resolve) do not reference each other. The sample classes' metrics are identical with ArgumentAttr.java left out."
+            }
+          ],
+          "relational_files": [
+            {
+              "repo": "apache/groovy",
+              "path": "/src/main/java/org/codehaus/groovy/ast/tools/GenericsUtils.java",
+              "why": "javalang 0.13 cannot parse `ClassNode[]::new` (array constructor reference); see relational.py"
+            },
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/jdk.compiler/share/classes/com/sun/tools/javac/comp/Operators.java",
+              "why": "javalang 0.13 cannot parse `OperatorSymbol[]::new` (line 300); see relational.py"
+            },
+            {
+              "repo": "apache/aries-jax-rs-whiteboard",
+              "path": "/jax-rs.whiteboard/src/main/java/org/apache/aries/jax/rs/whiteboard/internal/AriesJaxrsServiceRuntime.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (9 occurrences)"
+            },
+            {
+              "repo": "apache/camel",
+              "path": "/components/camel-salesforce/camel-salesforce-component/src/main/java/org/apache/camel/component/salesforce/api/utils/QueryHelper.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (2 occurrences)"
+            },
+            {
+              "repo": "apache/incubator-dubbo",
+              "path": "/dubbo-registry/dubbo-registry-api/src/main/java/org/apache/dubbo/registry/integration/RegistryProtocol.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "apache/lucene-solr",
+              "path": "/lucene/sandbox/src/java/org/apache/lucene/search/BM25FQuery.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "apache/nifi",
+              "path": "/nifi-nar-bundles/nifi-jolt-record-bundle/nifi-jolt-record-processors/src/main/java/org/apache/nifi/processors/jolt/record/JoltTransformRecord.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "eclipse/smarthome",
+              "path": "/extensions/binding/org.eclipse.smarthome.binding.lifx/src/main/java/org/eclipse/smarthome/binding/lifx/internal/LifxLightStateChanger.java",
+              "why": "javalang 0.13 cannot parse a type-use annotation in type arguments (`Map<Integer, @Nullable List<...>>`, line 86)"
+            },
+            {
+              "repo": "oracle/graal",
+              "path": "/sulong/projects/com.oracle.truffle.llvm.runtime/src/com/oracle/truffle/llvm/runtime/LLVMContext.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "SAP/SapMachine",
+              "path": "/src/java.net.http/share/classes/jdk/internal/net/http/ResponseSubscribers.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "spring-projects/spring-data-redis",
+              "path": "/src/main/java/org/springframework/data/redis/connection/DefaultStringRedisConnection.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new`"
+            },
+            {
+              "repo": "spring-projects/spring-data-redis",
+              "path": "/src/main/java/org/springframework/data/redis/connection/ReactiveStreamCommands.java",
+              "why": "javalang 0.13 cannot parse `Type[]::new` (2 occurrences)"
+            }
+          ],
+          "unresolved_ck_units": [
+            {
+              "repo": "eclipse/n4js",
+              "path": "/plugins/org.eclipse.n4js.ui/src-gen/org/eclipse/n4js/ui/contentassist/antlr/internal",
+              "affects": "4 function samples (6812825, 6823557, 6824306, 6829907) in InternalN4JSParser.java; no class samples",
+              "why": "CK OutOfMemoryError at java_xmx 6g in TightClassCohesion.getIndirectConnections (LCC's method-pair closure). The folder's only Java file is InternalN4JSParser.java (6.37 MB, generated ANTLR parser), so leaving a file out cannot help.",
+              "next": "retry this unit alone with a ~12g heap when that much RAM is free (machine has 15.7 GB)"
+            }
+          ]
+        },
+        "atfd_ignored_receiver_types": [
+          "String",
+          "Object",
+          "Integer",
+          "Long",
+          "Double",
+          "Float",
+          "Short",
+          "Byte",
+          "Boolean",
+          "Character",
+          "StringBuilder",
+          "StringBuffer",
+          "Class",
+          "List",
+          "ArrayList",
+          "LinkedList",
+          "Map",
+          "HashMap",
+          "TreeMap",
+          "LinkedHashMap",
+          "Set",
+          "HashSet",
+          "TreeSet",
+          "LinkedHashSet",
+          "Collection",
+          "Iterator",
+          "Optional",
+          "Collections",
+          "Arrays",
+          "Objects",
+          "Math",
+          "System",
+          "Thread"
+        ]
+      },
+      "join": {
+        "manual_check_rows": 30,
+        "manual_check_seed": 42,
+        "check_links": true,
+        "link_check": {
+          "file": "~/HeuristicHound_local/data/processed/link_check.csv",
+          "timeout_s": 30,
+          "max_retries": 3,
+          "backoff_s": 10,
+          "delay_s": {
+            "github.com": 1.0,
+            "archive.softwareheritage.org": 3.0,
+            "default": 2.0
+          }
+        }
+      },
+      "labels": {
+        "reviewer_aggregation": "max_severity",
+        "minor_severity_rule": "minor_plus",
+        "sensitivity_severity_rules": [
+          "major_critical_only"
+        ],
+        "agreement_metric": "krippendorff_alpha"
+      },
+      "splits": {
+        "group_column": "repository",
+        "test_size": 0.2,
+        "strategy": "GroupShuffleSplit",
+        "cv_folds": 5,
+        "cv_strategy": "StratifiedGroupKFold",
+        "positive_rate_tolerance_pp": 2,
+        "max_seed_attempts": 1000,
+        "row_level_contrast_experiment": true
+      },
+      "rule_baseline": {
+        "god_class": {
+          "atfd_gt": 5,
+          "wmc_gte": 47,
+          "tcc_lt": 0.3333333333
+        },
+        "data_class": {
+          "woc_lt": 0.3333333333,
+          "nopa_noam_gt_low": 3,
+          "wmc_lt_low": 31,
+          "nopa_noam_gt_high": 5,
+          "wmc_lt_high": 47
+        }
+      },
+      "metrics_models": {
+        "order": [
+          "logistic_regression",
+          "random_forest",
+          "xgboost"
+        ],
+        "seeds": [
+          42,
+          43,
+          44,
+          45,
+          46
+        ],
+        "features": [
+          "ck_wmc",
+          "ck_loc",
+          "ck_totalMethodsQty",
+          "ck_totalFieldsQty",
+          "ck_cbo",
+          "ck_rfc",
+          "ck_lcom",
+          "ck_lcom*",
+          "ck_tcc",
+          "ck_lcc",
+          "ck_dit",
+          "ck_noc",
+          "ck_fanin",
+          "ck_fanout",
+          "atfd"
+        ],
+        "negative_is_missing": [
+          "ck_tcc",
+          "ck_lcc"
+        ],
+        "missing_indicators": [
+          "ck_tcc",
+          "ck_lcc",
+          "ck_lcom*"
+        ],
+        "log1p_features": [
+          "ck_wmc",
+          "ck_loc",
+          "ck_totalMethodsQty",
+          "ck_totalFieldsQty",
+          "ck_cbo",
+          "ck_rfc",
+          "ck_lcom",
+          "ck_dit",
+          "ck_noc",
+          "ck_fanin",
+          "ck_fanout",
+          "atfd"
+        ],
+        "tuning_metric": "pr_auc",
+        "threshold_policy": "oof_max_f1",
+        "permutation_importance_repeats": 10,
+        "n_jobs": -1,
+        "logistic_regression": {
+          "penalty": "l2",
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "grid": {
+            "C": [
+              0.01,
+              0.1,
+              1,
+              10,
+              100
+            ]
+          }
+        },
+        "random_forest": {
+          "class_weight": "balanced_subsample",
+          "n_estimators": 500,
+          "grid": {
+            "max_depth": [
+              null,
+              5,
+              10
+            ],
+            "min_samples_leaf": [
+              1,
+              5,
+              10
+            ],
+            "max_features": [
+              "sqrt",
+              0.5
+            ]
+          }
+        },
+        "xgboost": {
+          "scale_pos_weight": "auto",
+          "subsample": 0.8,
+          "colsample_bytree": 0.8,
+          "tree_method": "hist",
+          "grid": {
+            "max_depth": [
+              2,
+              3,
+              4,
+              6
+            ],
+            "learning_rate": [
+              0.03,
+              0.1
+            ],
+            "n_estimators": [
+              200,
+              500
+            ],
+            "min_child_weight": [
+              1,
+              5
+            ]
+          }
+        },
+        "locked_selection": {
+          "blob": {
+            "model": "logistic_regression",
+            "params": {
+              "C": 0.01
+            },
+            "cv_pr_auc": 0.6511
+          },
+          "data_class": {
+            "model": "xgboost",
+            "params": {
+              "learning_rate": 0.03,
+              "max_depth": 2,
+              "min_child_weight": 5,
+              "n_estimators": 200
+            },
+            "cv_pr_auc": 0.5745
+          },
+          "predictions_dir": "~/HeuristicHound_local/data/processed/predictions/metrics"
+        },
+        "min_seeds_below_n_positives": 200,
+        "n_seeds_when_below_threshold": 5
+      },
+      "embeddings": {
+        "candidate_encoders": [
+          "codebert",
+          "unixcoder",
+          "cubert",
+          "codet5"
+        ],
+        "default_encoder": "codebert",
+        "encoder_hf_id": "microsoft/codebert-base",
+        "encoder_revision": "3b0952feddeffad0063f274080e3c23d75e7eb39",
+        "hf_cache_dir": "~/HeuristicHound_local/models/hf",
+        "encoder_weights_sha256": "28b61fd8fa069f6bc966f4cb9572a4026ab2a784fca8fb224020d91b744e32d6",
+        "max_tokens": 512,
+        "strategies": [
+          "truncation",
+          "hierarchical_pooling"
+        ],
+        "hierarchical_pool": "mean",
+        "batch_size": 16,
+        "token_pooling": "mean",
+        "store_cls": true,
+        "hierarchical_members": "all_with_nested",
+        "method_text": "with_javadoc",
+        "store_method_vectors": true,
+        "checkpoint_every_batches": 25,
+        "tiny_snippet_bytes": 50,
+        "determinism_check_n": 20,
+        "determinism_tol": 0.0001,
+        "method_review_n": 20,
+        "stop_file": "~/HeuristicHound_local/STOP",
+        "reference_embeddings_repo": "milica-skipina/ML-code-smell-detection"
+      },
+      "embedding_models": {
+        "strategies": [
+          "truncation",
+          "hierarchical_mean"
+        ],
+        "heads": [
+          "logistic_regression",
+          "mlp"
+        ],
+        "logistic_regression": {
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "grid": {
+            "C": [
+              0.0001,
+              0.001,
+              0.01,
+              0.1,
+              1
+            ]
+          }
+        },
+        "mlp": {
+          "solver": "adam",
+          "learning_rate_init": 0.001,
+          "max_iter": 300,
+          "early_stopping": false,
+          "sample_weight": "balanced",
+          "grid": {
+            "hidden_layer_sizes": [
+              [
+                64
+              ],
+              [
+                256
+              ]
+            ],
+            "alpha": [
+              0.0001,
+              0.01,
+              1.0
+            ]
+          }
+        },
+        "save_models": true,
+        "models_dir": "~/HeuristicHound_local/models/step10",
+        "size_diagnostic": true,
+        "locked_selection": {
+          "blob": {
+            "strategy": "truncation",
+            "head": "logistic_regression",
+            "params": {
+              "C": 0.01
+            },
+            "cv_pr_auc": 0.5061
+          },
+          "data_class": {
+            "strategy": "hierarchical_mean",
+            "head": "logistic_regression",
+            "params": {
+              "C": 0.001
+            },
+            "cv_pr_auc": 0.5728
+          },
+          "summary_file": "eval/results/step10_summary_20261108_175256.json",
+          "predictions_dir": "~/HeuristicHound_local/data/processed/predictions/embeddings",
+          "run_id": "20261108_174909"
+        }
+      },
+      "fusion": {
+        "early": {
+          "embedding_pca_dims": 50,
+          "scale_metrics": true,
+          "embedding_strategies": [
+            "truncation",
+            "hierarchical_mean"
+          ],
+          "pca_rescale": true,
+          "classifiers": [
+            "logistic_regression",
+            "xgboost"
+          ],
+          "logistic_regression": {
+            "class_weight": "balanced",
+            "max_iter": 5000,
+            "grid": {
+              "C": [
+                0.001,
+                0.01,
+                0.1,
+                1,
+                10
+              ]
+            }
+          },
+          "xgboost": "metrics_models"
+        },
+        "late": {
+          "stacker": "logistic_regression",
+          "inputs": [
+            "metrics_locked",
+            "embedding_locked"
+          ],
+          "score_transform": "logit",
+          "C": 1.0,
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "cross_fit": "nested",
+          "reproduce_tol": 1e-06
+        },
+        "selection": "cv_pr_auc",
+        "save_models": true,
+        "models_dir": "~/HeuristicHound_local/models/step11",
+        "locked_selection": {
+          "blob": {
+            "model": "late_stacker",
+            "cv_pr_auc": 0.6554
+          },
+          "data_class": {
+            "model": "late_stacker",
+            "cv_pr_auc": 0.6264
+          },
+          "summary_file": "eval/results/step11_summary_20261115_222236.json",
+          "predictions_dir": "~/HeuristicHound_local/data/processed/predictions/fusion",
+          "run_id": "20261115_221800"
+        }
+      },
+      "evaluation": {
+        "threshold_policy": "global_per_smell",
+        "calibration_method": "isotonic",
+        "headline_metrics": [
+          "f1",
+          "mcc",
+          "pr_auc"
+        ],
+        "bootstrap_n": 2000,
+        "bootstrap_alpha": 0.05,
+        "ood_dataset": null,
+        "arms": [
+          "rule",
+          "metrics",
+          "embedding_truncation",
+          "embedding_hierarchical_mean",
+          "fusion"
+        ],
+        "calibration_mode": "crossfit_oof",
+        "calibration_scores": "seed_averaged",
+        "ece_bins": 10,
+        "paired_comparisons": [
+          [
+            "fusion",
+            "metrics"
+          ],
+          [
+            "fusion",
+            "embedding_truncation"
+          ],
+          [
+            "fusion",
+            "embedding_hierarchical_mean"
+          ],
+          [
+            "metrics",
+            "embedding_truncation"
+          ],
+          [
+            "metrics",
+            "embedding_hierarchical_mean"
+          ],
+          [
+            "fusion",
+            "rule"
+          ],
+          [
+            "metrics",
+            "rule"
+          ],
+          [
+            "embedding_truncation",
+            "rule"
+          ],
+          [
+            "embedding_hierarchical_mean",
+            "rule"
+          ]
+        ],
+        "multiple_comparison_correction": "none",
+        "contrast": {
+          "refit": "locked_params",
+          "cv_strategy": "StratifiedKFold",
+          "cv_folds": 5,
+          "fold_seed": 42
+        },
+        "per_repo_csv": true
+      }
+    }
+  },
+  "step": "12-followup",
+  "check": "contrast seen vs unseen repositories (check 1)",
+  "run": "20261116_085354",
+  "smells": {
+    "blob": {
+      "n_contrast_train_repos": 395,
+      "A_seen_vs_unseen": {
+        "rule": {
+          "seen": {
+            "n": 539,
+            "n_pos": 118,
+            "pos_rate": 0.2189239332096475,
+            "n_repos": 218,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.27586206896551724,
+            "mcc": 0.2897821822792008
+          },
+          "unseen": {
+            "n": 47,
+            "n_pos": 9,
+            "pos_rate": 0.19148936170212766,
+            "n_repos": 42,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.2,
+            "mcc": 0.3029644197154619
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.07586206896551723,
+              "ci_low": -0.275,
+              "ci_high": 0.35037776924061975,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.013182237436261124,
+              "ci_low": -0.3033511307657873,
+              "ci_high": 0.36305712496788456,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "metrics": {
+          "seen": {
+            "n": 539,
+            "n_pos": 118,
+            "pos_rate": 0.2189239332096475,
+            "n_repos": 218,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.6245059288537549,
+            "mcc": 0.512004633114583,
+            "pr_auc": 0.6450914715936698
+          },
+          "unseen": {
+            "n": 47,
+            "n_pos": 9,
+            "pos_rate": 0.19148936170212766,
+            "n_repos": 42,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5555555555555556,
+            "mcc": 0.4502923976608187,
+            "pr_auc": 0.5696649029982364
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.06895037329819931,
+              "ci_low": -0.18272817460317461,
+              "ci_high": 0.40921748211216336,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": 0.06171223545376431,
+              "ci_low": -0.2498511960539124,
+              "ci_high": 0.4390371132223034,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": 0.0754265685954334,
+              "ci_low": -0.21755328093880932,
+              "ci_high": 0.36283376104181414,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "embedding_truncation": {
+          "seen": {
+            "n": 539,
+            "n_pos": 118,
+            "pos_rate": 0.2189239332096475,
+            "n_repos": 218,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5597667638483965,
+            "mcc": 0.4252643628435926,
+            "pr_auc": 0.5253423001149524
+          },
+          "unseen": {
+            "n": 47,
+            "n_pos": 9,
+            "pos_rate": 0.19148936170212766,
+            "n_repos": 42,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5806451612903226,
+            "mcc": 0.518785847899556,
+            "pr_auc": 0.6080031080031081
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": -0.0208783974419261,
+              "ci_low": -0.21095333217087514,
+              "ci_high": 0.2378370144992863,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.09352148505596336,
+              "ci_low": -0.28256889861455864,
+              "ci_high": 0.09428935023801528,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.08266080788815566,
+              "ci_low": -0.36534608623566195,
+              "ci_high": 0.23255038910304407,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "embedding_hierarchical_mean": {
+          "seen": {
+            "n": 539,
+            "n_pos": 118,
+            "pos_rate": 0.2189239332096475,
+            "n_repos": 218,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.45776566757493187,
+            "mcc": 0.26537040338979245,
+            "pr_auc": 0.34620119082271655
+          },
+          "unseen": {
+            "n": 47,
+            "n_pos": 9,
+            "pos_rate": 0.19148936170212766,
+            "n_repos": 42,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.3783783783783784,
+            "mcc": 0.1805185581338305,
+            "pr_auc": 0.45175565175565174
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.07938728919655347,
+              "ci_low": -0.11689626163310372,
+              "ci_high": 0.299493199964903,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": 0.08485184525596196,
+              "ci_low": -0.15809816102385446,
+              "ci_high": 0.3764536487215545,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.10555446093293519,
+              "ci_low": -0.37955259850047435,
+              "ci_high": 0.1805191542326497,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "fusion": {
+          "seen": {
+            "n": 539,
+            "n_pos": 118,
+            "pos_rate": 0.2189239332096475,
+            "n_repos": 218,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.6190476190476191,
+            "mcc": 0.5051685769128462,
+            "pr_auc": 0.6475629264060827
+          },
+          "unseen": {
+            "n": 47,
+            "n_pos": 9,
+            "pos_rate": 0.19148936170212766,
+            "n_repos": 42,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5263157894736842,
+            "mcc": 0.40761868836004506,
+            "pr_auc": 0.5494949494949495
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.09273182957393489,
+              "ci_low": -0.1639971804080885,
+              "ci_high": 0.42991343330664095,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": 0.09754988855280117,
+              "ci_low": -0.2294674799310794,
+              "ci_high": 0.4681598025829407,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": 0.09806797691113323,
+              "ci_low": -0.1940070230236393,
+              "ci_high": 0.37880486514083267,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            }
+          ]
+        }
+      },
+      "B_paired_same_samples": {
+        "rule": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 143,
+            "n_pos": 38,
+            "pos_rate": 0.26573426573426573,
+            "n_repos": 47,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 13,
+            "n_pos": 4,
+            "pos_rate": 0.3076923076923077,
+            "n_repos": 12,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 42,
+            "pos_rate": 0.2692307692307692,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "metrics": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 143,
+            "n_pos": 38,
+            "pos_rate": 0.26573426573426573,
+            "n_repos": 47,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.009389671361502372,
+                "ci_low": -0.02561101363622368,
+                "ci_high": 0.05002146119805889,
+                "p_a_not_better": 0.4345,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.005124308858152515,
+                "ci_low": -0.0462183543494222,
+                "ci_high": 0.05602488716424739,
+                "p_a_not_better": 0.4765,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.005114115155378518,
+                "ci_low": -0.0226575478589773,
+                "ci_high": 0.03626346533231763,
+                "p_a_not_better": 0.35,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 13,
+            "n_pos": 4,
+            "pos_rate": 0.3076923076923077,
+            "n_repos": 12,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.09523809523809523,
+                "ci_low": 0.0,
+                "ci_high": 0.33333333333333337,
+                "p_a_not_better": 0.4235,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.21359571545170208,
+                "ci_low": 0.0,
+                "ci_high": 0.516085979454823,
+                "p_a_not_better": 0.34442763489662126,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.0,
+                "ci_low": -0.012698412698412678,
+                "ci_high": 0.00952380952380949,
+                "p_a_not_better": 0.8840141200201714,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 42,
+            "pos_rate": 0.2692307692307692,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.017429938482570018,
+                "ci_low": -0.01817123456822558,
+                "ci_high": 0.0627994722172802,
+                "p_a_not_better": 0.2685,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.019589236855148018,
+                "ci_low": -0.03485919226992251,
+                "ci_high": 0.08040911090247252,
+                "p_a_not_better": 0.2985,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.0045665025175315455,
+                "ci_low": -0.022128055409548545,
+                "ci_high": 0.03327659381860039,
+                "p_a_not_better": 0.3525,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "embedding_truncation": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 143,
+            "n_pos": 38,
+            "pos_rate": 0.26573426573426573,
+            "n_repos": 47,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.05958245367112369,
+                "ci_low": -0.13453759643487997,
+                "ci_high": 0.025032856531572834,
+                "p_a_not_better": 0.9175,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.08465173577627139,
+                "ci_low": -0.18635314637264533,
+                "ci_high": 0.03801297746254858,
+                "p_a_not_better": 0.9185,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.02484521528566974,
+                "ci_low": -0.08364612851350785,
+                "ci_high": 0.044674769689264704,
+                "p_a_not_better": 0.7815,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 13,
+            "n_pos": 4,
+            "pos_rate": 0.3076923076923077,
+            "n_repos": 12,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.07272727272727275,
+                "ci_low": -0.2571428571428571,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.10286889997472792,
+                "ci_low": -0.32854654445345943,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.04999999999999993,
+                "ci_low": 0.0,
+                "ci_high": 0.2816666666666682,
+                "p_a_not_better": 0.5935451336359052,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 42,
+            "pos_rate": 0.2692307692307692,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.0610990258204861,
+                "ci_low": -0.12710705182667809,
+                "ci_high": 0.011918858543205626,
+                "p_a_not_better": 0.953,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.08639420673151366,
+                "ci_low": -0.17927697330527315,
+                "ci_high": 0.017300646686610254,
+                "p_a_not_better": 0.9515,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.01889141594436594,
+                "ci_low": -0.07549469829833173,
+                "ci_high": 0.048046615437815035,
+                "p_a_not_better": 0.7455,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "embedding_hierarchical_mean": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 143,
+            "n_pos": 38,
+            "pos_rate": 0.26573426573426573,
+            "n_repos": 47,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.008442776735459678,
+                "ci_low": -0.09998334386202032,
+                "ci_high": 0.09472955334220597,
+                "p_a_not_better": 0.573,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.02643055067469058,
+                "ci_low": -0.1567873346536211,
+                "ci_high": 0.12007216592358634,
+                "p_a_not_better": 0.6525,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.024489273068623585,
+                "ci_low": -0.05597038045609857,
+                "ci_high": 0.10942929009502286,
+                "p_a_not_better": 0.2795,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 13,
+            "n_pos": 4,
+            "pos_rate": 0.3076923076923077,
+            "n_repos": 12,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": -0.3896103896103896,
+                "ci_high": 0.4,
+                "p_a_not_better": 0.643,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": -0.6569808874199699,
+                "ci_high": 0.608456576872444,
+                "p_a_not_better": 0.6399394856278366,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.04583333333333339,
+                "ci_low": -0.5032575757575757,
+                "ci_high": 0.41666666666666663,
+                "p_a_not_better": 0.5708522440746344,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 42,
+            "pos_rate": 0.2692307692307692,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.006732117812061733,
+                "ci_low": -0.09404302932657665,
+                "ci_high": 0.09365087490692467,
+                "p_a_not_better": 0.558,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.022254719081856167,
+                "ci_low": -0.15174796511093536,
+                "ci_high": 0.12237131881520061,
+                "p_a_not_better": 0.6125,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.016174803907508917,
+                "ci_low": -0.07278362221612109,
+                "ci_high": 0.09810748119118104,
+                "p_a_not_better": 0.3405,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "fusion": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 143,
+            "n_pos": 38,
+            "pos_rate": 0.26573426573426573,
+            "n_repos": 47,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.009389671361502372,
+                "ci_low": -0.03898635477582846,
+                "ci_high": 0.06576572566478436,
+                "p_a_not_better": 0.4165,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.005124308858152515,
+                "ci_low": -0.06486296048469713,
+                "ci_high": 0.07749241563745236,
+                "p_a_not_better": 0.4835,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.007291608943543526,
+                "ci_low": -0.03313809114619034,
+                "ci_high": 0.049684681317059005,
+                "p_a_not_better": 0.372,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 13,
+            "n_pos": 4,
+            "pos_rate": 0.3076923076923077,
+            "n_repos": 12,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.1785714285714286,
+                "ci_low": -0.6666666666666666,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.2128824552737596,
+                "ci_low": -0.7568411779289758,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.14464285714285718,
+                "ci_low": -0.4404761904761904,
+                "ci_high": 0.0,
+                "p_a_not_better": 0.9934442763489663,
+                "n_boot_valid": 1983,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 42,
+            "pos_rate": 0.2692307692307692,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.008658008658008698,
+                "ci_low": -0.07229558347186757,
+                "ci_high": 0.04973308590736165,
+                "p_a_not_better": 0.6685,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.014912687556542958,
+                "ci_low": -0.09846903855191697,
+                "ci_high": 0.057931732805700756,
+                "p_a_not_better": 0.6955,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.0031719947213174615,
+                "ci_low": -0.043839983910822077,
+                "ci_high": 0.037992279837240205,
+                "p_a_not_better": 0.569,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        }
+      }
+    },
+    "data_class": {
+      "n_contrast_train_repos": 396,
+      "A_seen_vs_unseen": {
+        "rule": {
+          "seen": {
+            "n": 541,
+            "n_pos": 116,
+            "pos_rate": 0.2144177449168207,
+            "n_repos": 220,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.39751552795031053,
+            "mcc": 0.3645252225120049
+          },
+          "unseen": {
+            "n": 46,
+            "n_pos": 5,
+            "pos_rate": 0.10869565217391304,
+            "n_repos": 41,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.75,
+            "mcc": 0.7563683119061863
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": -0.35248447204968947,
+              "ci_low": -0.6541424600536934,
+              "ci_high": 0.3971678173876286,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.39184308939418133,
+              "ci_low": -0.6848370401799072,
+              "ci_high": 0.3526559107223168,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "metrics": {
+          "seen": {
+            "n": 541,
+            "n_pos": 116,
+            "pos_rate": 0.2144177449168207,
+            "n_repos": 220,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5425867507886435,
+            "mcc": 0.3998657378549902,
+            "pr_auc": 0.5519200048648557
+          },
+          "unseen": {
+            "n": 46,
+            "n_pos": 5,
+            "pos_rate": 0.10869565217391304,
+            "n_repos": 41,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5714285714285714,
+            "mcc": 0.5320050477526025,
+            "pr_auc": 0.7119047619047618
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": -0.028841820639927906,
+              "ci_low": -0.31273006740095355,
+              "ci_high": 0.3858494820070242,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.1321393098976123,
+              "ci_low": -0.43609708862555474,
+              "ci_high": 0.28968533836398175,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.1599847570399061,
+              "ci_low": -0.47774025104083406,
+              "ci_high": 0.3483500258674245,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "embedding_truncation": {
+          "seen": {
+            "n": 541,
+            "n_pos": 116,
+            "pos_rate": 0.2144177449168207,
+            "n_repos": 220,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5725190839694656,
+            "mcc": 0.44333361819956724,
+            "pr_auc": 0.5267251160583158
+          },
+          "unseen": {
+            "n": 46,
+            "n_pos": 5,
+            "pos_rate": 0.10869565217391304,
+            "n_repos": 41,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.5,
+            "mcc": 0.4591794198635512,
+            "pr_auc": 0.5716791979949876
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.0725190839694656,
+              "ci_low": -0.20172758277409075,
+              "ci_high": 0.4417673630717109,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.01584580166398397,
+              "ci_low": -0.3024464051025561,
+              "ci_high": 0.33332290210253684,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.04495408193667172,
+              "ci_low": -0.4311104390215904,
+              "ci_high": 0.39091952524530765,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "embedding_hierarchical_mean": {
+          "seen": {
+            "n": 541,
+            "n_pos": 116,
+            "pos_rate": 0.2144177449168207,
+            "n_repos": 220,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.547945205479452,
+            "mcc": 0.43493952976194195,
+            "pr_auc": 0.5368488693667595
+          },
+          "unseen": {
+            "n": 46,
+            "n_pos": 5,
+            "pos_rate": 0.10869565217391304,
+            "n_repos": 41,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.36363636363636365,
+            "mcc": 0.279517586746904,
+            "pr_auc": 0.5545454545454546
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": 0.18430884184308838,
+              "ci_low": -0.16673186344238972,
+              "ci_high": 0.5837026728423915,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": 0.15542194301503792,
+              "ci_low": -0.2578311097091918,
+              "ci_high": 0.5675482787931102,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.0176965851786951,
+              "ci_low": -0.46062071187150533,
+              "ci_high": 0.4463894195053945,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            }
+          ]
+        },
+        "fusion": {
+          "seen": {
+            "n": 541,
+            "n_pos": 116,
+            "pos_rate": 0.2144177449168207,
+            "n_repos": 220,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.6417910447761194,
+            "mcc": 0.5351648909664115,
+            "pr_auc": 0.5965030875034258
+          },
+          "unseen": {
+            "n": 46,
+            "n_pos": 5,
+            "pos_rate": 0.10869565217391304,
+            "n_repos": 41,
+            "median_samples_per_repo": 1.0,
+            "f1": 0.7272727272727273,
+            "mcc": 0.6942856186939229,
+            "pr_auc": 0.7725
+          },
+          "seen_minus_unseen": [
+            {
+              "metric": "f1",
+              "diff_point": -0.08548168249660792,
+              "ci_low": -0.3580363382250175,
+              "ci_high": 0.40217854293691946,
+              "n_boot_valid": 2000,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "mcc",
+              "diff_point": -0.1591207277275114,
+              "ci_low": -0.46564194571739304,
+              "ci_high": 0.3062117206479855,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            },
+            {
+              "metric": "pr_auc",
+              "diff_point": -0.17599691249657412,
+              "ci_low": -0.44956813452153405,
+              "ci_high": 0.29603968215042015,
+              "n_boot_valid": 1989,
+              "ci_excludes_0": false
+            }
+          ]
+        }
+      },
+      "B_paired_same_samples": {
+        "rule": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 144,
+            "n_pos": 43,
+            "pos_rate": 0.2986111111111111,
+            "n_repos": 48,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 12,
+            "n_pos": 1,
+            "pos_rate": 0.08333333333333333,
+            "n_repos": 11,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 44,
+            "pos_rate": 0.28205128205128205,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "metrics": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 144,
+            "n_pos": 43,
+            "pos_rate": 0.2986111111111111,
+            "n_repos": 48,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.007881773399014746,
+                "ci_low": -0.07274478520178011,
+                "ci_high": 0.05285941712907996,
+                "p_a_not_better": 0.6135,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.021855270510670266,
+                "ci_low": -0.11444048112157738,
+                "ci_high": 0.0624199712962754,
+                "p_a_not_better": 0.7105,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.03339270477949019,
+                "ci_low": -0.007749180380563743,
+                "ci_high": 0.09068293523519286,
+                "p_a_not_better": 0.0725,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 12,
+            "n_pos": 1,
+            "pos_rate": 0.08333333333333333,
+            "n_repos": 11,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.5,
+                "ci_low": -0.75,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 44,
+            "pos_rate": 0.28205128205128205,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.007407407407407418,
+                "ci_low": -0.07210746678178251,
+                "ci_high": 0.05102881319139295,
+                "p_a_not_better": 0.598,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": -0.016641178703101223,
+                "ci_low": -0.10437397958078828,
+                "ci_high": 0.06848369698277897,
+                "p_a_not_better": 0.6635,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.028032414888611412,
+                "ci_low": -0.01539606658775279,
+                "ci_high": 0.0805540670715115,
+                "p_a_not_better": 0.1395,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "embedding_truncation": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 144,
+            "n_pos": 43,
+            "pos_rate": 0.2986111111111111,
+            "n_repos": 48,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.003668378576669129,
+                "ci_low": -0.06967234262125906,
+                "ci_high": 0.06464854238588423,
+                "p_a_not_better": 0.457,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.019684242264865315,
+                "ci_low": -0.07804412286160316,
+                "ci_high": 0.10746573321597123,
+                "p_a_not_better": 0.354,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.021881785264119213,
+                "ci_low": -0.05905042319558722,
+                "ci_high": 0.021126067669567188,
+                "p_a_not_better": 0.8595,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 12,
+            "n_pos": 1,
+            "pos_rate": 0.08333333333333333,
+            "n_repos": 11,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.16666666666666669,
+                "ci_low": 0.0,
+                "ci_high": 0.6666666666666667,
+                "p_a_not_better": 0.3603112840466926,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 44,
+            "pos_rate": 0.28205128205128205,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.002574906367041274,
+                "ci_low": -0.06912519953296598,
+                "ci_high": 0.062227080551846836,
+                "p_a_not_better": 0.476,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.016744364128577105,
+                "ci_low": -0.07744307477887614,
+                "ci_high": 0.09980184463995977,
+                "p_a_not_better": 0.3655,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": -0.021153314502564857,
+                "ci_low": -0.05343154335067905,
+                "ci_high": 0.021002379708457843,
+                "p_a_not_better": 0.8375,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "embedding_hierarchical_mean": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 144,
+            "n_pos": 43,
+            "pos_rate": 0.2986111111111111,
+            "n_repos": 48,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.00517538815411156,
+                "ci_low": -0.1136381673881674,
+                "ci_high": 0.08991740987570312,
+                "p_a_not_better": 0.5555,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.04911168947888278,
+                "ci_low": -0.09470130777045403,
+                "ci_high": 0.17687648464682773,
+                "p_a_not_better": 0.256,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.01293784011253496,
+                "ci_low": -0.013357591505981264,
+                "ci_high": 0.03917512530167849,
+                "p_a_not_better": 0.2135,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 12,
+            "n_pos": 1,
+            "pos_rate": 0.08333333333333333,
+            "n_repos": 11,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 44,
+            "pos_rate": 0.28205128205128205,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": -0.005087695809345316,
+                "ci_low": -0.0993752544704386,
+                "ci_high": 0.08201271073410146,
+                "p_a_not_better": 0.535,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0393059028847631,
+                "ci_low": -0.08699977502336545,
+                "ci_high": 0.15699810133338862,
+                "p_a_not_better": 0.268,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.013961577954702764,
+                "ci_low": -0.011981562671952153,
+                "ci_high": 0.041324007954020546,
+                "p_a_not_better": 0.171,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        },
+        "fusion": {
+          "n_shared_samples": 156,
+          "seen_by_row_model": {
+            "n": 144,
+            "n_pos": 43,
+            "pos_rate": 0.2986111111111111,
+            "n_repos": 48,
+            "median_samples_per_repo": 2.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.031609195402298895,
+                "ci_low": 0.0,
+                "ci_high": 0.07115938224508529,
+                "p_a_not_better": 0.047,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.046768211624986566,
+                "ci_low": 0.0,
+                "ci_high": 0.1069249059327993,
+                "p_a_not_better": 0.047,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.02011617287350098,
+                "ci_low": -0.006163127864400819,
+                "ci_high": 0.049398104828661554,
+                "p_a_not_better": 0.067,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "unseen_by_row_model": {
+            "n": 12,
+            "n_pos": 1,
+            "pos_rate": 0.08333333333333333,
+            "n_repos": 11,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "p_a_not_better": 1.0,
+                "n_boot_valid": 1285,
+                "ci_excludes_0": false
+              }
+            ]
+          },
+          "all_shared": {
+            "n": 156,
+            "n_pos": 44,
+            "pos_rate": 0.28205128205128205,
+            "n_repos": 59,
+            "median_samples_per_repo": 1.0,
+            "row_minus_repository": [
+              {
+                "metric": "f1",
+                "diff_point": 0.030525030525030528,
+                "ci_low": 0.0,
+                "ci_high": 0.06706046097463662,
+                "p_a_not_better": 0.0485,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "mcc",
+                "diff_point": 0.044048475768865836,
+                "ci_low": 0.0,
+                "ci_high": 0.09743244088404897,
+                "p_a_not_better": 0.0485,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              },
+              {
+                "metric": "pr_auc",
+                "diff_point": 0.01593637740696552,
+                "ci_low": -0.009752556734533967,
+                "ci_high": 0.043184670041577396,
+                "p_a_not_better": 0.1085,
+                "n_boot_valid": 2000,
+                "ci_excludes_0": false
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "notes": [
+    "Groups in A differ in composition (seen repositories are the larger ones), so A mixes leakage with repository differences; B compares two models on the same samples.",
+    "Repository-level model = Step 12 final (calibrated) model, which never saw any test repository."
+  ]
+}
