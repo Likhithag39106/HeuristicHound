@@ -369,16 +369,70 @@ embedding_models:
   save_models: true
   models_dir: ~/HeuristicHound_local/models/step10
   size_diagnostic: true
+  # Selected by CV PR-AUC on 2026-11-08 (run step10_summary_20261108_175256.json), before test was read.
+  # Recorded 2026-11-15 (user approval). Never re-selected on test. Read-only record, not read by Step 10;
+  # Steps 11-12 use it (phase_d_results.fusion checks it against the Step 10 summary).
+  locked_selection:
+    blob:
+      strategy: truncation
+      head: logistic_regression
+      params: {C: 0.01}
+      cv_pr_auc: 0.5061
+    data_class:
+      strategy: hierarchical_mean
+      head: logistic_regression
+      params: {C: 0.001}                 # truncation + LogReg was 0.5705 (near tie)
+      cv_pr_auc: 0.5728
+    summary_file: eval/results/step10_summary_20261108_175256.json
+    predictions_dir: ~/HeuristicHound_local/data/processed/predictions/embeddings   # *_20261108_174909.parquet
+    run_id: "20261108_174909"
 
 # ---------------------------------------------------------------------------
 # Step 11 — fusion
 # ---------------------------------------------------------------------------
+# Step 11 decisions (user, 2026-11-15): both embedding strategies tried in early fusion; LogReg and XGBoost
+# early-fusion classifiers chosen per smell by CV; 2-input late stacker on logits, fixed C, nested cross-fitting;
+# one fusion model per smell chosen by CV PR-AUC across early and late (recorded after review). Seeds, folds,
+# tuning metric and threshold policy come from metrics_models (Step 8's protocol). Base models = the locked
+# selections in metrics_models and embedding_models.
 fusion:
   early:
     embedding_pca_dims: 50   # mitigates the 14-metric vs 768-dim imbalance
     scale_metrics: true
+    embedding_strategies: [truncation, hierarchical_mean]
+    pca_rescale: true        # StandardScaler -> PCA -> StandardScaler (components on the metrics' scale)
+    classifiers: [logistic_regression, xgboost]
+    logistic_regression:
+      class_weight: balanced
+      max_iter: 5000
+      grid:
+        C: [0.001, 0.01, 0.1, 1, 10]
+    xgboost: metrics_models   # same settings and grid as metrics_models.xgboost
   late:
     stacker: logistic_regression   # weights learned on validation folds, never max-of-two
+    inputs: [metrics_locked, embedding_locked]
+    score_transform: logit
+    C: 1.0
+    class_weight: balanced
+    max_iter: 5000
+    cross_fit: nested        # stacker OOF: inner CV on the other 4 folds -> base refits with locked params
+    reproduce_tol: 1.0e-6    # refitted base OOF scores must match the saved Step 8/10 parquets
+  selection: cv_pr_auc       # one fusion model per smell, across early and late
+  save_models: true
+  models_dir: ~/HeuristicHound_local/models/step11
+  # Selected by CV PR-AUC on 2026-11-15 (run step11_summary_20261115_222236.json), before test was read.
+  # Recorded 2026-11-16 (user approval). Never re-selected on test. Read-only record, not read by Step 11;
+  # Step 12 uses it.
+  locked_selection:
+    blob:
+      model: late_stacker
+      cv_pr_auc: 0.6554       # nested stacker OOF; best early: truncation + LogReg 0.643
+    data_class:
+      model: late_stacker
+      cv_pr_auc: 0.6264       # best early: hierarchical + XGBoost 0.612
+    summary_file: eval/results/step11_summary_20261115_222236.json
+    predictions_dir: ~/HeuristicHound_local/data/processed/predictions/fusion   # *_20261115_221800.parquet
+    run_id: "20261115_221800"   # predictions and models/step11/<run_id> (shared by every Step 11 candidate)
 
 # ---------------------------------------------------------------------------
 # Step 12 — threshold, calibration, evaluation

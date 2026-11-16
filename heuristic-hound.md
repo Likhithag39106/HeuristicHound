@@ -358,6 +358,7 @@ Then delete the clone. For repos over a size threshold, scope CK to the enclosin
 ### Phase D — Fusion and results
 
 **Step 11 — Fusion.** Early (concatenate; watch the 14-vs-768 dimensionality imbalance — scale metrics, PCA the embedding to ~50 dims, or both) and late (stacker trained on validation folds).
+- *Result (2026-11-15, repository-level test):* CV selected the late stacker (nested cross-fitted) for both smells. **Blob: F1 0.660 / MCC 0.546** — essentially the metrics arm (0.650 / 0.538); the embeddings add little beyond size. **Data Class: F1 0.633 / MCC 0.528 / PR-AUC 0.699**, above both arms (metrics 0.588 / 0.469 / 0.605), the two arms weighted equally — the representations complement each other here. Paired tests are Step 12. Details: FLOW.md Stage 11.
 
 **Step 12 — Threshold, evaluation, OOD [GATE].** Freeze one global threshold per smell, selected on validation folds. Isotonic calibration. Produce the results table. Re-run under the row-level split and report the delta. Apply winning arm to CrowdSmelling unmodified.
 

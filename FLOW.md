@@ -5,7 +5,7 @@
 > **Requirements and rules:** [`PRD.md`](PRD.md). **Background:** [`heuristic-hound.md`](heuristic-hound.md). **Parameters:** [`config.yaml`](config.yaml).
 > Method level is **parked**. It appears below only where Step 2 stores raw data for later use.
 > **Data location:** generated data (`data/raw/…`, `data/processed/…` below) lives outside the repo in `~/HeuristicHound_local/` with the same layout; see `config.yaml` → `paths`. Split files and results stay in the repo under `eval/`.
-> **Where we are (2026-11-15):** Stages 1–2 done for all 522 repos. Stage 3 **passed its gate** (user sign-off 2026-10-25). Stages 5–7 run (2026-10-25). Stage 8 **passed its gate** (user sign-off 2026-10-28; locked models Blob = LogReg, Data Class = XGBoost; limitations in Stage 8 below). Stage 9 encoded with CodeBERT (2026-11-07) and Stage 10 trained and scored (2026-11-08); results below. Commits: Steps 5–8 `a02c87a` (same tree as the earlier `3a16fdb`, re-committed 2026-11-04), Phase C setup + Step 9 `d2793e0` / `8b58edd`, Step 10 `52af866`. Next is Stage 11 (fusion), after the user's go-ahead. One CK unit (eclipse/n4js, method samples only) is left `failed` and must be resolved before method level resumes. Status per step: PRD §0.1.
+> **Where we are (2026-11-16):** Stage 11 (fusion) run 2026-11-15 — late stacker selected for both smells (results below; code ready to commit); Stage 12 plan approved 2026-11-16. Stages 1–2 done for all 522 repos. Stage 3 **passed its gate** (user sign-off 2026-10-25). Stages 5–7 run (2026-10-25). Stage 8 **passed its gate** (user sign-off 2026-10-28; locked models Blob = LogReg, Data Class = XGBoost; limitations in Stage 8 below). Stage 9 encoded with CodeBERT (2026-11-07) and Stage 10 trained and scored (2026-11-08); results below. Commits: Steps 5–8 `a02c87a` (same tree as the earlier `3a16fdb`, re-committed 2026-11-04), Phase C setup + Step 9 `d2793e0` / `8b58edd`, Step 10 `52af866`. Next is Stage 11 (fusion), after the user's go-ahead. One CK unit (eclipse/n4js, method samples only) is left `failed` and must be resolved before method level resumes. Status per step: PRD §0.1.
 
 ---
 
@@ -215,8 +215,12 @@ early:  scale(metrics) ⊕ PCA_50(embedding)  ─► classifier
 
 late:   out-of-fold scores from metrics arm ┐
         out-of-fold scores from embedding arm ┴─► logistic-regression stacker
+        (stacker's own OOF scores: nested cross-fitting — base models refitted
+         with locked params on inner folds, so fold k's labels never reach it)
 ```
 Never take the per-sample max of the two arms' scores.
+**Result (2026-11-15, `eval/results/step11_summary_20261115_222236.json`):** 4 early candidates (both strategies × LogReg / XGBoost) and the late stacker per smell; selection by CV PR-AUC before test was read → **late stacker for both smells** (CV Blob 0.655 vs metrics 0.651; Data Class 0.626 vs 0.574 / 0.573). Test, mean over 5 seeds: Blob F1 0.660 / MCC 0.546 / PR-AUC 0.713 (metrics arm 0.650 / 0.538 / 0.710 — essentially no gain; stacker weights 0.94 metrics / 0.29 embedding; fused scores track log LOC, Spearman 0.96); Data Class 0.633 / 0.528 / 0.699 (metrics 0.588 / 0.469 / 0.605, embedding 0.555 / 0.422 / 0.661; weights 0.77 / 0.77; Spearman vs size 0.14). Refitted base OOF scores reproduced the saved Step 8/10 parquets exactly; the 75 Step 7–10 output files are byte-identical before and after. Limitations: base hyperparameters were tuned on all 5 folds (stacker OOF slightly optimistic); on test a non-selected Data Class candidate (early hierarchical + XGBoost, F1 0.646 / MCC 0.551) scored higher — the CV choice stays locked (`fusion.locked_selection`, recorded 2026-11-16).
+Provenance: the Step 11 results record `git_commit` `c533e68` (HEAD at run time), which holds only the `fusion.py` stub; they were produced from uncommitted working-tree code (`phase_d_results/fusion.py`, `tests/test_fusion.py`, `config.yaml` with `embedding_models.locked_selection` and the `fusion` block), to be committed together with the results. Each results file's config snapshot equals that `config.yaml` except `fusion.locked_selection`, added after the run.
 
 ### Stage 12 — Final evaluation (Step 12) · GATE
 ```
